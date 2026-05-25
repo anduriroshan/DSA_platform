@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useVisualizerStore } from '../../store/useVisualizerStore';
 import { algorithmRegistry } from '../../utils/algorithmRegistry';
 
@@ -7,6 +7,9 @@ export default function InputControls() {
   const config = algorithmRegistry[currentAlgorithm];
   const [inputText, setInputText] = useState(inputArray.join(', '));
   const [targetText, setTargetText] = useState(String(searchTarget));
+
+  useEffect(() => { setInputText(inputArray.join(', ')); }, [inputArray]);
+  useEffect(() => { setTargetText(String(searchTarget)); }, [searchTarget]);
 
   const handleApply = () => {
     const parsed = inputText.split(',').map(s => parseInt(s.trim())).filter(n => !isNaN(n));
@@ -31,36 +34,30 @@ export default function InputControls() {
 
   return (
     <div className="input-controls">
-      <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600, whiteSpace: 'nowrap' }}>
-        Input:
-      </label>
+      <label htmlFor="ic-arr">ARR</label>
       <input
+        id="ic-arr"
         className="input-field"
         value={inputText}
         onChange={(e) => setInputText(e.target.value)}
-        placeholder="e.g. 64, 34, 25, 12, 22"
+        placeholder="64, 34, 25..."
         onKeyDown={(e) => e.key === 'Enter' && handleApply()}
       />
       {isSearchAlgo && (
         <>
-          <label style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', fontWeight: 600, whiteSpace: 'nowrap' }}>
-            Target:
-          </label>
+          <label htmlFor="ic-tgt">TGT</label>
           <input
+            id="ic-tgt"
             className="input-field"
-            style={{ width: '60px', flex: 'none' }}
+            style={{ maxWidth: 64, flex: 'none' }}
             value={targetText}
             onChange={(e) => setTargetText(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleApply()}
           />
         </>
       )}
-      <button className="btn btn-primary btn-sm" onClick={handleApply}>
-        Apply
-      </button>
-      <button className="btn btn-secondary btn-sm" onClick={handleRandom}>
-        🎲 Random
-      </button>
+      <button className="btn btn-primary btn-sm" onClick={handleApply} title="Apply changes" aria-label="Apply input">▶</button>
+      <button className="btn btn-secondary btn-sm" onClick={handleRandom} title="Randomise input" aria-label="Randomise input">⚄</button>
     </div>
   );
 }

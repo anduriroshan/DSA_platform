@@ -1,101 +1,110 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useVisualizerStore } from '../store/useVisualizerStore';
-import { algorithmRegistry } from '../utils/algorithmRegistry';
-import PseudoCode from '../components/editor/PseudoCode';
-import ArrayVisualizer from '../components/visualization/ArrayVisualizer';
-import TreeVisualizer from '../components/visualization/TreeVisualizer';
-import StackQueueVisualizer from '../components/visualization/StackQueueVisualizer';
-import LinkedListVisualizer from '../components/visualization/LinkedListVisualizer';
-import PlaybackControls from '../components/controls/PlaybackControls';
-import InputControls from '../components/controls/InputControls';
-import CodePanel from '../components/editor/CodePanel';
+import { algorithmRegistry, getAlgorithmNavigation } from '../utils/algorithmRegistry';
+import useSEO from '../hooks/useSEO';
+import LearnTab from '../components/tabs/LearnTab';
+import VizPanel from '../components/visualization/VizPanel';
+import CodeEditorDrawer from '../components/editor/CodeEditorDrawer';
+
+const CATEGORY_LABELS: Record<string, string> = {
+  sorting: 'Sorting',
+  searching: 'Searching',
+  'data-structures': 'Structures',
+  trees: 'Trees',
+};
 
 export default function VisualizerPage() {
   const { slug } = useParams<{ slug: string }>();
-  const { loadAlgorithm, currentAlgorithm, visualizerType, frames, currentStep } = useVisualizerStore();
+  const {
+    loadAlgorithm,
+    currentAlgorithm,
+    frames,
+    codeEditorOpen,
+    toggleCodeEditor,
+  } = useVisualizerStore();
+
   const config = slug ? algorithmRegistry[slug] : null;
+  const nav = slug ? getAlgorithmNavigation(slug) : null;
+
+  useSEO({
+    title: config ? `${config.name} — Interactive Visualization` : 'Algorithm Not Found',
+    description: config
+      ? `Learn ${config.name} with step-by-step visualization. ${config.description} Time: ${config.timeComplexity}, Space: ${config.spaceComplexity}.`
+      : 'Algorithm visualization not found.',
+    keywords: config
+      ? `${config.name}, ${config.category}, algorithm visualization, DSA, data structures, ${config.difficulty}`
+      : undefined,
+  });
 
   useEffect(() => {
-    if (slug && slug !== currentAlgorithm) {
-      loadAlgorithm(slug);
-    }
+    if (slug && slug !== currentAlgorithm) loadAlgorithm(slug);
   }, [slug]);
 
-  // Initialize frames on first load
   useEffect(() => {
-    if (slug && frames.length === 0) {
-      loadAlgorithm(slug);
-    }
+    if (slug && frames.length === 0) loadAlgorithm(slug);
   }, []);
 
   if (!config) {
     return (
       <div className="empty-state">
-        <div className="icon">🔍</div>
-        <p>Algorithm not found. Select one from the sidebar.</p>
+        <div className="icon">◇</div>
+        <p>ALGORITHM NOT FOUND<br />Select one from the sidebar.</p>
       </div>
     );
   }
 
-  const currentFrame = frames[currentStep];
-
-  const renderVisualizer = () => {
-    switch (visualizerType) {
-      case 'array':
-        return <ArrayVisualizer />;
-      case 'tree':
-        return <TreeVisualizer />;
-      case 'stack-queue':
-        return <StackQueueVisualizer />;
-      case 'linked-list':
-        return <LinkedListVisualizer />;
-      default:
-        return <ArrayVisualizer />;
-    }
-  };
-
   return (
     <div className="visualizer-page">
-      {/* Algorithm Info Bar */}
-      <div className="algo-info-bar">
-        <div className="algo-info-left">
-          <h2>{config.name}</h2>
-          <div className="complexity-badges">
-            <span className="complexity-badge">⏱ {config.timeComplexity}</span>
-            <span className="complexity-badge space">💾 {config.spaceComplexity}</span>
-          </div>
-        </div>
-        <div className="algo-description">{config.description}</div>
-      </div>
-
-      {/* Input Controls */}
-      <InputControls />
-
-      {/* Three-Panel Layout */}
-      <div className="visualizer-panels">
-
-
-        {/* Center: Visualization */}
-        <div className="panel visualization-panel">
-          <div className="visualization-canvas">
-            {renderVisualizer()}
-            {currentFrame && (
-              <div className="step-description">
-                {('description' in currentFrame) ? currentFrame.description : ''}
-              </div>
-            )}
-          </div>
+      <div className="algo-bar">
+        <div className="algo-breadcrumb">
+          <span className="breadcrumb-category">{CATEGORY_LABELS[config.category] || config.category}</span>
+          <span className="breadcrumb-sep">▸</span>
+          <span className="breadcrumb-name">{config.name}</span>
+          {nav && <span className="breadcrumb-pos">({nav.categoryPosition}/{nav.categoryTotal})</span>}
         </div>
 
-        {/* Right: Code Editor */}
-        <div className="panel code-panel">
-          <CodePanel />
+        <span className="complexity-badge">⏱ {config.timeComplexity}</span>
+        <span className="complexity-badge space">💾 {config.spaceComplexity}</span>
+        <span className={`difficulty-badge ${config.difficulty}`}>{config.difficulty}</span>
+
+        <div className="algo-nav">
+          {nav?.prev ? (
+            <Link to={`/visualize/${nav.prev.slug}`} className="algo-nav-btn" title={nav.prev.name}>◀ PREV</Link>
+          ) : (
+            <span className="algo-nav-btn disabled">◀ PREV</span>
+          )}
+          {nav?.next ? (
+            <Link to={`/visualize/${nav.next.slug}`} className="algo-nav-btn" title={nav.next.name}>NEXT ▶</Link>
+          ) : (
+            <span className="algo-nav-btn disabled">NEXT ▶</span>
+          )}
         </div>
       </div>
 
-      {/* Playback Controls */}
-      <PlaybackControls />
+      <div className="viz-workspace">
+        <div className="content-column">
+          <div className="tab-content">
+            <LearnTab />
+          </div>
+
+          {!codeEditorOpen && (
+            <button
+              className="code-fab"
+              onClick={toggleCodeEditor}
+              title="Open code editor"
+              aria-label="Open code editor"
+            >
+              <span className="code-fab-icon">⌨</span>
+              <span className="code-fab-label">CODE</span>
+            </button>
+          )}
+
+          <CodeEditorDrawer />
+        </div>
+
+        <VizPanel />
+      </div>
     </div>
   );
 }

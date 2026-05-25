@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSA Quest — Design Concept</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-base:       #c8d4f0;
+      --bg-card:       #dce6f8;
+      --bg-dark:       #1a1f3c;
+      --bg-darker:     #0f1224;
+      --accent-cyan:   #00d4d4;
+      --accent-yellow: #f5c800;
+      --accent-coral:  #ff6b6b;
+      --accent-green:  #00e676;
+      --ink:           #1a1f3c;
+      --ink-muted:     #4a5080;
+      --easy:          #00e676;
+      --medium:        #f5c800;
+      --hard:          #ff6b6b;
+      --shadow-px:     4px 4px 0px var(--ink);
+      --shadow-px-lg:  6px 6px 0px var(--ink);
+      --shadow-cyan:   4px 4px 0px #007a7a;
+      --font-pixel:    'Press Start 2P', monospace;
+      --font-retro:    'Share Tech Mono', monospace;
+      --font-code:     'JetBrains Mono', monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg-base);
+      color: var(--ink);
+      font-family: var(--font-retro);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── Utilities ── */
+    .pixel-border { border: 3px solid var(--ink); box-shadow: var(--shadow-px); }
+    .pixel-border-lg { border: 3px solid var(--ink); box-shadow: var(--shadow-px-lg); }
+    .section { padding: 80px 60px; max-width: 1200px; margin: 0 auto; }
+    .section-title {
+      font-family: var(--font-pixel);
+      font-size: 13px;
+      letter-spacing: 0.05em;
+      color: var(--ink-muted);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .section-heading {
+      font-family: var(--font-pixel);
+      font-size: 22px;
+      color: var(--ink);
+      margin-bottom: 48px;
+      line-height: 1.6;
+    }
+    .section-heading span { color: var(--accent-cyan); }
+    .divider {
+      border: none;
+      border-top: 3px solid var(--ink);
+      margin: 0;
+    }
+    .tag {
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      padding: 4px 8px;
+      border: 2px solid var(--ink);
+      display: inline-block;
+      background: var(--bg-card);
+    }
+
+    /* ────────────────────────────────────────
+       SECTION 0 — PAGE HEADER
+    ──────────────────────────────────────── */
+    .page-header {
+      background: var(--bg-darker);
+      color: white;
+      padding: 20px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 4px solid var(--accent-cyan);
+    }
+    .page-header-title {
+      font-family: var(--font-pixel);
+      font-size: 10px;
+      color: var(--accent-cyan);
+      letter-spacing: 0.1em;
+    }
+    .page-header-meta {
+      font-family: var(--font-retro);
+      font-size: 16px;
+      color: #8899cc;
+    }
+
+    /* ────────────────────────────────────────
+       SECTION 1 — HERO / NEW IDENTITY
+    ──────────────────────────────────────── */
+    .hero-section {
+      background: var(--bg-base);
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 4px solid var(--ink);
+    }
+    .hero-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+    }
+    .hero-eyebrow {
+      font-family: var(--font-pixel);
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--ink-muted);
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+    .hero-logo {
+      font-family: var(--font-pixel);
+      font-size: 52px;
+      color: var(--ink);
+      line-height: 1.2;
+      margin-bottom: 8px;
+      text-shadow: 6px 6px 0 var(--accent-cyan);
+    }
+    .hero-logo span { color: var(--accent-cyan); }
+    .hero-tagline {
+      font-family: var(--font-retro);
+      font-size: 26px;
+      color: var(--ink-muted);
+      margin-bottom: 40px;
+      letter-spacing: 0.05em;
+    }
+    .hero-buttons { display: flex; gap: 20px; flex-wrap: wrap; justify-content: center; }
+    .btn-primary {
+      font-family: var(--font-pixel);
+      font-size: 11px;
+      padding: 16px 28px;
+      background: var(--accent-cyan);
+      color: var(--ink);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-primary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); }
+    .btn-primary:active { transform: translate(2px,2px); box-shadow: 2px 2px 0 var(--ink); }
+    .btn-secondary {
+      font-family: var(--font-pixel);
+      font-size: 11px;
+      padding: 16px 28px;
+      background: transparent;
+      color: var(--ink);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .btn-secondary:hover { transform: translate(-2px,-2px); box-shadow: 6px 6px 0 var(--ink); background: var(--bg-card); }
+
+    /* Pixel deco elements */
+    .deco { position: absolute; font-size: 28px; opacity: 0.35; user-select: none; animation: float 3s ease-in-out infinite; }
+    .deco:nth-child(odd) { animation-direction: alternate; }
+    @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-12px); } }
+    .d1 { top: 15%; left: 5%; font-size: 36px; animation-delay: 0s; }
+    .d2 { top: 20%; right: 6%; font-size: 24px; animation-delay: 0.5s; }
+    .d3 { bottom: 20%; left: 8%; font-size: 20px; animation-delay: 1s; }
+    .d4 { bottom: 15%; right: 5%; font-size: 32px; animation-delay: 0.3s; }
+    .d5 { top: 50%; left: 2%; font-size: 18px; animation-delay: 0.7s; }
+    .d6 { top: 40%; right: 3%; font-size: 22px; animation-delay: 1.2s; }
+
+    /* ────────────────────────────────────────
+       SECTION 2 — COLOR PALETTE
+    ──────────────────────────────────────── */
+    .palette-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 24px;
+    }
+    .swatch {
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      overflow: hidden;
+    }
+    .swatch-color { height: 100px; width: 100%; }
+    .swatch-info { padding: 12px; background: var(--bg-card); border-top: 3px solid var(--ink); }
+    .swatch-name { font-family: var(--font-pixel); font-size: 8px; margin-bottom: 4px; }
+    .swatch-hex { font-family: var(--font-code); font-size: 12px; color: var(--ink-muted); margin-bottom: 6px; }
+    .swatch-usage { font-family: var(--font-retro); font-size: 14px; color: var(--ink-muted); line-height: 1.3; }
+
+    /* ────────────────────────────────────────
+       SECTION 3 — TYPOGRAPHY
+    ──────────────────────────────────────── */
+    .type-section { background: var(--bg-card); border-top: 4px solid var(--ink); border-bottom: 4px solid var(--ink); }
+    .type-row {
+      display: flex;
+      align-items: baseline;
+      gap: 32px;
+      padding: 20px 0;
+      border-bottom: 2px dashed var(--ink-muted);
+    }
+    .type-row:last-child { border-bottom: none; }
+    .type-meta { width: 160px; flex-shrink: 0; }
+    .type-label { font-family: var(--font-pixel); font-size: 8px; color: var(--ink-muted); }
+    .type-spec { font-family: var(--font-code); font-size: 12px; color: var(--ink-muted); margin-top: 4px; }
+    .type-sample { flex: 1; }
+    .t-display { font-family: var(--font-pixel); font-size: 40px; line-height: 1.2; }
+    .t-h1      { font-family: var(--font-pixel); font-size: 28px; line-height: 1.4; }
+    .t-h2      { font-family: var(--font-pixel); font-size: 20px; line-height: 1.4; }
+    .t-h3      { font-family: var(--font-pixel); font-size: 14px; line-height: 1.6; }
+    .t-body    { font-family: var(--font-retro); font-size: 16px; line-height: 1.8; }
+    .t-caption { font-family: var(--font-pixel); font-size: 10px; line-height: 1.6; color: var(--ink-muted); }
+    .t-code    { font-family: var(--font-code); font-size: 16px; line-height: 1.6; background: var(--bg-darker); color: var(--accent-cyan); padding: 12px 16px; display: inline-block; border: 2px solid var(--ink); }
+
+    .font-showcase {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .font-card {
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      background: white;
+      padding: 24px;
+    }
+    .font-card-title { font-family: var(--font-pixel); font-size: 8px; color: var(--ink-muted); margin-bottom: 16px; letter-spacing: 0.1em; }
+    .font-card-specimen { font-size: 20px; line-height: 2; color: var(--ink); }
+
+    /* ────────────────────────────────────────
+       SECTION 4 — COMPONENT LIBRARY
+    ──────────────────────────────────────── */
+    .component-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+    .component-block {
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      background: var(--bg-card);
+      overflow: hidden;
+    }
+    .component-block-header {
+      padding: 10px 16px;
+      background: var(--ink);
+      color: var(--accent-cyan);
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      letter-spacing: 0.1em;
+    }
+    .component-block-body { padding: 24px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+
+    /* Badge */
+    .badge {
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      padding: 5px 10px;
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+    .badge-easy   { background: var(--easy);   color: var(--bg-darker); }
+    .badge-medium { background: var(--medium); color: var(--bg-darker); }
+    .badge-hard   { background: var(--hard);   color: white; }
+
+    /* Algorithm card */
+    .algo-card {
+      width: 200px;
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px-lg);
+      background: white;
+      transition: transform 0.1s, box-shadow 0.1s;
+      cursor: pointer;
+    }
+    .algo-card:hover { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 var(--ink); }
+    .algo-card-icon {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      border-bottom: 3px solid var(--ink);
+    }
+    .algo-card-body { padding: 12px; }
+    .algo-card-name { font-family: var(--font-pixel); font-size: 8px; margin-bottom: 8px; line-height: 1.8; }
+    .algo-card-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+
+    /* Sidebar */
+    .sidebar-demo {
+      background: var(--bg-darker);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      padding: 16px 0;
+      width: 220px;
+    }
+    .sidebar-cat {
+      font-family: var(--font-pixel);
+      font-size: 7px;
+      letter-spacing: 0.15em;
+      color: #556;
+      text-transform: uppercase;
+      padding: 8px 16px 4px;
+    }
+    .sidebar-item {
+      font-family: var(--font-retro);
+      font-size: 14px;
+      color: #aabbdd;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.1s;
+    }
+    .sidebar-item:hover { background: rgba(255,255,255,0.05); color: white; }
+    .sidebar-item.active { border-left: 3px solid var(--accent-cyan); color: var(--accent-cyan); background: rgba(0,212,212,0.08); }
+    .sidebar-item .dot { width: 6px; height: 6px; background: currentColor; flex-shrink: 0; }
+
+    /* Playback controls */
+    .playback-bar {
+      background: var(--bg-darker);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .play-btn {
+      font-family: var(--font-pixel);
+      font-size: 10px;
+      padding: 10px 14px;
+      background: var(--bg-card);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .play-btn:hover { transform: translate(-1px,-1px); box-shadow: 4px 4px 0 var(--ink); }
+    .play-btn.active { background: var(--accent-cyan); }
+    .progress-wrap { flex: 1; min-width: 120px; }
+    .progress-track {
+      height: 12px;
+      background: #2a3050;
+      border: 2px solid var(--ink);
+      position: relative;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 40%;
+      background: var(--accent-cyan);
+    }
+    .step-counter { font-family: var(--font-pixel); font-size: 8px; color: #aabbdd; margin-top: 4px; }
+    .speed-label { font-family: var(--font-pixel); font-size: 8px; color: #aabbdd; }
+
+    /* Array visualizer bars */
+    .array-viz {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 120px;
+      padding: 12px;
+      background: var(--bg-darker);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+    }
+    .bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .bar {
+      width: 28px;
+      border: 2px solid var(--ink);
+      position: relative;
+    }
+    .bar-val { font-family: var(--font-pixel); font-size: 7px; color: #aabbdd; }
+    .bar-default  { background: #3a4f7a; }
+    .bar-compare  { background: var(--accent-yellow); }
+    .bar-swap     { background: var(--accent-coral); }
+    .bar-sorted   { background: var(--accent-green); }
+    .bar-pivot    { background: #cc66ff; }
+
+    /* Bar legend */
+    .bar-legend { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 6px; font-family: var(--font-retro); font-size: 16px; }
+    .legend-dot { width: 14px; height: 14px; border: 2px solid var(--ink); }
+
+    /* Step pill */
+    .step-pill {
+      display: inline-block;
+      background: rgba(26,31,60,0.9);
+      color: white;
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 3px 3px 0 var(--accent-cyan);
+      padding: 10px 20px;
+      font-family: var(--font-retro);
+      font-size: 14px;
+    }
+
+    /* Input field */
+    .pixel-input {
+      font-family: var(--font-code);
+      font-size: 14px;
+      padding: 12px 16px;
+      background: white;
+      color: var(--ink);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      outline: none;
+      width: 260px;
+    }
+    .pixel-input:focus { box-shadow: 6px 6px 0 var(--ink); }
+
+    /* Code panel */
+    .code-panel-demo {
+      background: var(--bg-darker);
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      font-family: var(--font-code);
+      font-size: 13px;
+      width: 100%;
+    }
+    .code-panel-header {
+      padding: 10px 16px;
+      border-bottom: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #141830;
+    }
+    .code-panel-title { font-family: var(--font-pixel); font-size: 8px; color: var(--accent-cyan); }
+    .code-panel-dot { width: 8px; height: 8px; border: 2px solid var(--ink); }
+    .code-body { padding: 16px; color: #8899dd; line-height: 1.8; }
+    .code-line { display: flex; gap: 16px; }
+    .code-ln { color: #445; min-width: 20px; }
+    .code-kw { color: #cc66ff; }
+    .code-fn { color: var(--accent-cyan); }
+    .code-str { color: var(--accent-yellow); }
+    .code-active { background: rgba(0,212,212,0.12); border-left: 3px solid var(--accent-cyan); padding-left: 4px; }
+    .code-run-btn {
+      margin: 8px 16px 12px;
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      padding: 8px 16px;
+      background: var(--accent-cyan);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      cursor: pointer;
+      display: inline-block;
+    }
+
+    /* ────────────────────────────────────────
+       SECTION 5 — HOMEPAGE MOCKUP
+    ──────────────────────────────────────── */
+    .mockup-wrapper {
+      border: 4px solid var(--ink);
+      box-shadow: var(--shadow-px-lg);
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+    .mock-nav {
+      background: rgba(200,212,240,0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 3px solid var(--ink);
+      padding: 0 32px;
+      display: flex;
+      align-items: center;
+      height: 56px;
+      gap: 32px;
+    }
+    .mock-nav-logo { font-family: var(--font-pixel); font-size: 12px; color: var(--ink); }
+    .mock-nav-logo span { color: var(--accent-cyan); }
+    .mock-nav-links { display: flex; gap: 24px; margin-left: auto; }
+    .mock-nav-link { font-family: var(--font-pixel); font-size: 8px; color: var(--ink-muted); text-decoration: none; }
+    .mock-hero {
+      padding: 60px 32px 48px;
+      text-align: center;
+      position: relative;
+    }
+    .mock-hero-title { font-family: var(--font-pixel); font-size: 28px; color: var(--ink); line-height: 1.6; margin-bottom: 16px; text-shadow: 4px 4px 0 var(--accent-cyan); }
+    .mock-hero-sub { font-family: var(--font-retro); font-size: 15px; color: var(--ink-muted); margin-bottom: 32px; }
+    .mock-hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .mock-deco { position: absolute; font-size: 24px; opacity: 0.4; }
+    .md1 { top: 20px; left: 40px; }
+    .md2 { top: 30px; right: 60px; }
+    .md3 { bottom: 30px; left: 80px; }
+    .md4 { bottom: 20px; right: 40px; }
+    .mock-section-label {
+      font-family: var(--font-pixel);
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      color: var(--ink-muted);
+      text-align: center;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+    }
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+      padding: 0 32px 48px;
+    }
+    .cat-card {
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      background: white;
+      padding: 20px 16px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s;
+    }
+    .cat-card:hover { transform: translate(-3px,-3px); box-shadow: 7px 7px 0 var(--ink); }
+    .cat-icon { font-size: 32px; margin-bottom: 12px; }
+    .cat-name { font-family: var(--font-pixel); font-size: 9px; margin-bottom: 8px; line-height: 1.8; }
+    .cat-count { font-family: var(--font-retro); font-size: 16px; color: var(--ink-muted); }
+    .cat-tags { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; }
+    .cat-tag {
+      font-family: var(--font-pixel);
+      font-size: 7px;
+      padding: 3px 6px;
+      border: 1px solid var(--ink-muted);
+      color: var(--ink-muted);
+    }
+    .cat-card.c1 { border-top: 6px solid var(--accent-coral); }
+    .cat-card.c2 { border-top: 6px solid var(--accent-cyan); }
+    .cat-card.c3 { border-top: 6px solid var(--accent-yellow); }
+    .cat-card.c4 { border-top: 6px solid var(--accent-green); }
+
+    /* ────────────────────────────────────────
+       SECTION 6 — VISUALIZER PAGE MOCKUP
+    ──────────────────────────────────────── */
+    .viz-mockup {
+      border: 4px solid var(--ink);
+      box-shadow: var(--shadow-px-lg);
+      overflow: hidden;
+      background: var(--bg-base);
+    }
+    .viz-layout {
+      display: flex;
+      height: 480px;
+    }
+    .viz-sidebar {
+      width: 200px;
+      background: var(--bg-darker);
+      border-right: 3px solid var(--ink);
+      flex-shrink: 0;
+      overflow-y: auto;
+      padding: 12px 0;
+    }
+    .viz-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .viz-info-bar {
+      background: var(--bg-card);
+      border-bottom: 3px solid var(--ink);
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .viz-algo-name { font-family: var(--font-pixel); font-size: 10px; }
+    .complexity-badge {
+      font-family: var(--font-pixel);
+      font-size: 7px;
+      padding: 4px 8px;
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      background: var(--bg-base);
+    }
+    .viz-canvas-area {
+      flex: 1;
+      background: #e8eefc;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      padding: 24px 24px 16px;
+      position: relative;
+    }
+    .viz-bar-wrap { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .viz-bar { width: 32px; border: 2px solid var(--ink); }
+    .viz-bar-val { font-family: var(--font-pixel); font-size: 7px; }
+    .viz-step-pill {
+      position: absolute;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(26,31,60,0.88);
+      color: white;
+      border: 2px solid var(--accent-cyan);
+      box-shadow: 3px 3px 0 var(--accent-cyan);
+      padding: 8px 16px;
+      font-family: var(--font-retro);
+      font-size: 14px;
+      white-space: nowrap;
+    }
+    .viz-controls {
+      background: var(--bg-darker);
+      border-top: 3px solid var(--ink);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .viz-right {
+      width: 320px;
+      background: var(--bg-darker);
+      border-left: 3px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+    }
+    .viz-code-header {
+      padding: 10px 16px;
+      border-bottom: 2px solid var(--ink);
+      background: #141830;
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      color: var(--accent-cyan);
+    }
+    .viz-code-body {
+      flex: 1;
+      padding: 12px 16px;
+      font-family: var(--font-code);
+      font-size: 12px;
+      color: #7788cc;
+      line-height: 2;
+      overflow: hidden;
+    }
+    .viz-run-row {
+      padding: 8px 16px;
+      border-top: 2px solid var(--ink);
+    }
+    .viz-run-btn {
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      padding: 8px 16px;
+      background: var(--accent-cyan);
+      color: var(--ink);
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      cursor: pointer;
+    }
+
+    /* ────────────────────────────────────────
+       SECTION 7 — MOTION / INTERACTION NOTES
+    ──────────────────────────────────────── */
+    .motion-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+    .motion-card {
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      background: var(--bg-card);
+      padding: 24px;
+    }
+    .motion-card-title { font-family: var(--font-pixel); font-size: 9px; margin-bottom: 12px; color: var(--ink); }
+    .motion-card-body { font-family: var(--font-retro); font-size: 14px; color: var(--ink-muted); line-height: 1.8; }
+    .motion-demo { margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    .motion-btn-before {
+      font-family: var(--font-pixel); font-size: 9px; padding: 10px 16px;
+      background: var(--accent-cyan); border: 2px solid var(--ink); box-shadow: 4px 4px 0 var(--ink); cursor: pointer;
+    }
+    .motion-btn-after {
+      font-family: var(--font-pixel); font-size: 9px; padding: 10px 16px;
+      background: var(--accent-cyan); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink);
+      transform: translate(2px,2px); cursor: pointer;
+    }
+    .arrow-label { font-family: var(--font-retro); font-size: 14px; color: var(--ink-muted); }
+
+    .pixel-spinner {
+      width: 32px;
+      height: 32px;
+      border: 4px solid var(--ink);
+      border-top-color: var(--accent-cyan);
+      animation: spin 0.6s steps(8, end) infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .bar-anim-demo {
+      display: flex;
+      align-items: flex-end;
+      gap: 6px;
+      height: 80px;
+      padding: 8px;
+      background: var(--bg-darker);
+      border: 2px solid var(--ink);
+    }
+    .bar-anim {
+      width: 24px;
+      border: 2px solid var(--ink);
+      transition: height 0.3s steps(4, end), background 0.1s;
+    }
+    .highlight-demo { border-left: 3px solid var(--accent-cyan); background: rgba(0,212,212,0.1); padding: 4px 8px; font-family: var(--font-code); font-size: 13px; color: var(--accent-cyan); display: inline-block; margin-top: 8px; }
+
+    /* ────────────────────────────────────────
+       FOOTER
+    ──────────────────────────────────────── */
+    .concept-footer {
+      background: var(--bg-darker);
+      border-top: 4px solid var(--ink);
+      padding: 40px 60px;
+      text-align: center;
+    }
+    .concept-footer-title { font-family: var(--font-pixel); font-size: 10px; color: var(--accent-cyan); margin-bottom: 12px; letter-spacing: 0.1em; }
+    .concept-footer-sub { font-family: var(--font-retro); font-size: 14px; color: #556699; }
+
+    /* Section bg alternation */
+    .bg-alt { background: var(--bg-card); }
+  </style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-title">◆ DSA QUEST — DESIGN CONCEPT v1.0</div>
+  <div class="page-header-meta">Generated for review · May 2026</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 — NEW IDENTITY / HERO
+══════════════════════════════════════════ -->
+<div class="hero-section">
+  <span class="deco d1">◆</span>
+  <span class="deco d2">✦</span>
+  <span class="deco d3">⬡</span>
+  <span class="deco d4">◈</span>
+  <span class="deco d5">✧</span>
+  <span class="deco d6">◇</span>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">▶ Proposed Brand Identity</div>
+    <div class="hero-logo">DSA<span>QUEST</span></div>
+    <div class="hero-tagline">Learn Algorithms. Level Up. One Step at a Time.</div>
+    <div class="hero-buttons">
+      <a href="#" class="btn-primary">▶ START QUEST</a>
+      <a href="#" class="btn-secondary">◎ BROWSE ALGORITHMS</a>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2 — COLOR PALETTE
+══════════════════════════════════════════ -->
+<div style="border-top: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-title">02 / COLOR SYSTEM</div>
+    <div class="section-heading">The <span>Pixel Palette</span></div>
+    <div class="palette-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#c8d4f0;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">BASE PERIWINKLE</div>
+          <div class="swatch-hex">#C8D4F0</div>
+          <div class="swatch-usage">Page background, hero — the canvas everything sits on</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#dce6f8;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">CARD LIGHT</div>
+          <div class="swatch-hex">#DCE6F8</div>
+          <div class="swatch-usage">Card surfaces, panels, elevated UI elements</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#00d4d4; border: 3px solid var(--ink);"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">PIXEL CYAN</div>
+          <div class="swatch-hex">#00D4D4</div>
+          <div class="swatch-usage">Primary CTA buttons, active states, progress bars, links</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#f5c800;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">ARCADE YELLOW</div>
+          <div class="swatch-hex">#F5C800</div>
+          <div class="swatch-usage">Secondary accent, comparisons in visualizer, Medium badge</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#ff6b6b;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">GAME CORAL</div>
+          <div class="swatch-hex">#FF6B6B</div>
+          <div class="swatch-usage">Swaps in visualizer, Hard difficulty badge, errors</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#00e676;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">LEVEL GREEN</div>
+          <div class="swatch-hex">#00E676</div>
+          <div class="swatch-usage">Sorted/found state in visualizer, Easy difficulty badge</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#cc66ff;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">POWER PURPLE</div>
+          <div class="swatch-hex">#CC66FF</div>
+          <div class="swatch-usage">Pivot/special elements in visualizer, code keywords</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1a1f3c;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">DEEP NAVY</div>
+          <div class="swatch-hex">#1A1F3C</div>
+          <div class="swatch-usage">Ink / borders / shadows, sidebar bg, code panel bg</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 — TYPOGRAPHY
+══════════════════════════════════════════ -->
+<div class="type-section">
+  <div class="section">
+    <div class="section-title">03 / TYPOGRAPHY</div>
+    <div class="section-heading">Font <span>System</span></div>
+
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">DISPLAY</div>
+        <div class="type-spec">Press Start 2P · 40px</div>
+      </div>
+      <div class="type-sample">
+        <div class="t-display">ALGORITHM</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">HEADING 1</div>
+        <div class="type-spec">Press Start 2P · 28px</div>
+      </div>
+      <div class="type-sample">
+        <div class="t-h1">Bubble Sort</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">HEADING 2</div>
+        <div class="type-spec">Press Start 2P · 20px</div>
+      </div>
+      <div class="type-sample">
+        <div class="t-h2">Time: O(n²)</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">HEADING 3</div>
+        <div class="type-spec">Press Start 2P · 14px</div>
+      </div>
+      <div class="type-sample">
+        <div class="t-h3">Sorting Algorithms</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">BODY TEXT</div>
+        <div class="type-spec">Share Tech Mono · 16px</div>
+      </div>
+      <div class="type-sample">
+        <div class="t-body">Bubble Sort repeatedly steps through the list, compares adjacent elements and swaps them if they are in the wrong order. The pass through the list is repeated until the list is sorted.</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">CAPTION / LABEL</div>
+        <div class="type-spec">Press Start 2P · 10px</div>
+      </div>
+      <div class="type-sample">
+        <div class="t-caption">Step 3 of 12 · Comparing index 2 and 3</div>
+      </div>
+    </div>
+    <div class="type-row">
+      <div class="type-meta">
+        <div class="type-label">CODE</div>
+        <div class="type-spec">JetBrains Mono · 16px</div>
+      </div>
+      <div class="type-sample">
+        <div class="t-code">def bubble_sort(arr): ...</div>
+      </div>
+    </div>
+
+    <div class="font-showcase">
+      <div class="font-card">
+        <div class="font-card-title">PRESS START 2P — HEADLINES &amp; UI</div>
+        <div class="font-card-specimen" style="font-family:'Press Start 2P'; font-size:14px; line-height:2.5;">
+          A B C D E F G H I J K<br>
+          L M N O P Q R S T U V<br>
+          W X Y Z 0 1 2 3 4 5 6<br>
+          7 8 9 ! ? # @ &amp; ( ) [ ]
+        </div>
+      </div>
+      <div class="font-card">
+        <div class="font-card-title">SHARE TECH MONO — BODY &amp; DESCRIPTIONS</div>
+        <div class="font-card-specimen" style="font-family:'Share Tech Mono'; font-size:15px; line-height:2;">
+          ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>
+          abcdefghijklmnopqrstuvwxyz<br>
+          0123456789 !?#@&amp;()[]{}<br>
+          The quick brown fox jumps over the lazy dog.
+        </div>
+      </div>
+      <div class="font-card">
+        <div class="font-card-title">JETBRAINS MONO — CODE ONLY</div>
+        <div class="font-card-specimen" style="font-family:'JetBrains Mono'; font-size:13px; line-height:2; color:#1a1f3c;">
+          def quick_sort(arr, lo, hi):<br>
+          &nbsp;&nbsp;if lo &lt; hi:<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;p = partition(arr)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;quick_sort(arr, lo, p-1)<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;quick_sort(arr, p+1, hi)
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 — COMPONENT LIBRARY
+══════════════════════════════════════════ -->
+<div style="border-top: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-title">04 / COMPONENTS</div>
+    <div class="section-heading">Pixel <span>Component Library</span></div>
+    <div class="component-grid">
+
+      <!-- Buttons + Badges -->
+      <div class="component-block">
+        <div class="component-block-header">BUTTONS &amp; BADGES</div>
+        <div class="component-block-body" style="flex-direction:column; gap:24px;">
+          <div>
+            <div class="type-label" style="margin-bottom:12px;">PRIMARY BUTTON</div>
+            <div style="display:flex; gap:16px; align-items:center; flex-wrap:wrap;">
+              <button class="btn-primary">▶ START</button>
+              <button class="btn-secondary">◎ EXPLORE</button>
+            </div>
+          </div>
+          <div>
+            <div class="type-label" style="margin-bottom:12px;">DIFFICULTY BADGES</div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+              <span class="badge badge-easy">▲ EASY</span>
+              <span class="badge badge-medium">◆ MEDIUM</span>
+              <span class="badge badge-hard">■ HARD</span>
+            </div>
+          </div>
+          <div>
+            <div class="type-label" style="margin-bottom:12px;">INPUT FIELD</div>
+            <input class="pixel-input" type="text" value="5, 2, 9, 1, 7, 3" placeholder="Enter array..." />
+          </div>
+        </div>
+      </div>
+
+      <!-- Algorithm Card -->
+      <div class="component-block">
+        <div class="component-block-header">ALGORITHM CARD</div>
+        <div class="component-block-body" style="justify-content:center; flex-wrap:wrap; gap:24px;">
+          <div class="algo-card">
+            <div class="algo-card-icon" style="background:#ffeaea;">🫧</div>
+            <div class="algo-card-body">
+              <div class="algo-card-name">BUBBLE SORT</div>
+              <div class="algo-card-tags">
+                <span class="badge badge-easy" style="font-size:7px; padding:3px 6px;">EASY</span>
+                <span class="tag" style="font-size:7px; padding:3px 6px;">O(n²)</span>
+              </div>
+            </div>
+          </div>
+          <div class="algo-card">
+            <div class="algo-card-icon" style="background:#eafff5;">🌳</div>
+            <div class="algo-card-body">
+              <div class="algo-card-name">BINARY SEARCH TREE</div>
+              <div class="algo-card-tags">
+                <span class="badge badge-medium" style="font-size:7px; padding:3px 6px;">MEDIUM</span>
+                <span class="tag" style="font-size:7px; padding:3px 6px;">O(log n)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="component-block">
+        <div class="component-block-header">SIDEBAR NAVIGATION</div>
+        <div class="component-block-body" style="padding:0;">
+          <div class="sidebar-demo">
+            <div class="sidebar-cat">◈ SORTING</div>
+            <div class="sidebar-item active"><div class="dot"></div>Bubble Sort</div>
+            <div class="sidebar-item"><div class="dot"></div>Quick Sort</div>
+            <div class="sidebar-item"><div class="dot"></div>Merge Sort</div>
+            <div class="sidebar-cat">◈ SEARCHING</div>
+            <div class="sidebar-item"><div class="dot"></div>Binary Search</div>
+            <div class="sidebar-item"><div class="dot"></div>Linear Search</div>
+            <div class="sidebar-cat">◈ DATA STRUCTURES</div>
+            <div class="sidebar-item"><div class="dot"></div>Stack</div>
+            <div class="sidebar-item"><div class="dot"></div>Queue</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Array Visualizer -->
+      <div class="component-block">
+        <div class="component-block-header">ARRAY VISUALIZER — COLOR STATES</div>
+        <div class="component-block-body" style="flex-direction:column;">
+          <div class="array-viz">
+            <div class="bar-wrap"><div class="bar bar-sorted" style="height:90px;"></div><div class="bar-val">1</div></div>
+            <div class="bar-wrap"><div class="bar bar-sorted" style="height:50px;"></div><div class="bar-val">3</div></div>
+            <div class="bar-wrap"><div class="bar bar-compare" style="height:70px;"></div><div class="bar-val">5</div></div>
+            <div class="bar-wrap"><div class="bar bar-compare" style="height:80px;"></div><div class="bar-val">7</div></div>
+            <div class="bar-wrap"><div class="bar bar-swap" style="height:30px;"></div><div class="bar-val">2</div></div>
+            <div class="bar-wrap"><div class="bar bar-default" style="height:60px;"></div><div class="bar-val">4</div></div>
+            <div class="bar-wrap"><div class="bar bar-pivot" style="height:75px;"></div><div class="bar-val">6</div></div>
+            <div class="bar-wrap"><div class="bar bar-default" style="height:40px;"></div><div class="bar-val">3</div></div>
+          </div>
+          <div class="bar-legend">
+            <div class="legend-item"><div class="legend-dot" style="background:#3a4f7a;"></div>Default</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--accent-yellow);"></div>Comparing</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--accent-coral);"></div>Swapping</div>
+            <div class="legend-item"><div class="legend-dot" style="background:var(--easy);"></div>Sorted</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#cc66ff;"></div>Pivot</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Playback Controls -->
+      <div class="component-block">
+        <div class="component-block-header">PLAYBACK CONTROLS</div>
+        <div class="component-block-body" style="padding:0;">
+          <div class="playback-bar" style="width:100%;">
+            <button class="play-btn">⏮</button>
+            <button class="play-btn">◀</button>
+            <button class="play-btn active">⏸</button>
+            <button class="play-btn">▶</button>
+            <button class="play-btn">⏭</button>
+            <div class="progress-wrap">
+              <div class="progress-track"><div class="progress-fill"></div></div>
+              <div class="step-counter">STEP 5 / 12</div>
+            </div>
+            <div class="speed-label">1.0x</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Step Pill + Code Panel -->
+      <div class="component-block">
+        <div class="component-block-header">STEP DESCRIPTION &amp; CODE PANEL</div>
+        <div class="component-block-body" style="flex-direction:column; gap:20px;">
+          <div>
+            <div class="type-label" style="margin-bottom:10px;">STEP DESCRIPTION PILL</div>
+            <div class="step-pill">◆ Comparing index 3 and 4 — swap needed</div>
+          </div>
+          <div style="width:100%;">
+            <div class="type-label" style="margin-bottom:10px;">CODE PANEL</div>
+            <div class="code-panel-demo">
+              <div class="code-panel-header">
+                <div class="code-panel-dot" style="background:#ff6b6b;"></div>
+                <div class="code-panel-dot" style="background:#f5c800;"></div>
+                <div class="code-panel-dot" style="background:#00e676;"></div>
+                <div class="code-panel-title">PYTHON EDITOR</div>
+              </div>
+              <div class="code-body">
+                <div class="code-line"><span class="code-ln">1</span><span><span class="code-kw">def</span> <span class="code-fn">bubble_sort</span>(arr):</span></div>
+                <div class="code-line"><span class="code-ln">2</span><span>&nbsp;&nbsp;n = len(arr)</span></div>
+                <div class="code-line code-active"><span class="code-ln">3</span><span>&nbsp;&nbsp;<span class="code-kw">for</span> i <span class="code-kw">in</span> range(n):</span></div>
+                <div class="code-line"><span class="code-ln">4</span><span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">for</span> j <span class="code-kw">in</span> range(n-i-1):</span></div>
+                <div class="code-line"><span class="code-ln">5</span><span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="code-kw">if</span> arr[j] &gt; arr[j+1]:</span></div>
+              </div>
+              <div class="code-run-btn">▶ RUN CODE</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5 — HOMEPAGE MOCKUP
+══════════════════════════════════════════ -->
+<div class="bg-alt" style="border-top: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-title">05 / LAYOUT MOCKUP</div>
+    <div class="section-heading">Homepage <span>Redesign</span></div>
+    <div class="mockup-wrapper">
+      <!-- Navbar -->
+      <div class="mock-nav">
+        <div class="mock-nav-logo">DSA<span>QUEST</span></div>
+        <div class="mock-nav-links">
+          <a class="mock-nav-link" href="#">HOME</a>
+          <a class="mock-nav-link" href="#">ALGORITHMS</a>
+          <a class="mock-nav-link" href="#">ABOUT</a>
+        </div>
+      </div>
+      <!-- Hero -->
+      <div class="mock-hero">
+        <div class="mock-deco md1">◆</div>
+        <div class="mock-deco md2">✦</div>
+        <div class="mock-deco md3">◇</div>
+        <div class="mock-deco md4">⬡</div>
+        <div class="mock-hero-title">Learn Algorithms<br>the Fun Way</div>
+        <div class="mock-hero-sub">Step through visualizations. Write real code. Level up your DSA.</div>
+        <div class="mock-hero-btns">
+          <a href="#" class="btn-primary" style="font-size:9px; padding:12px 20px;">▶ START QUEST</a>
+          <a href="#" class="btn-secondary" style="font-size:9px; padding:12px 20px;">◎ BROWSE ALL</a>
+        </div>
+      </div>
+      <!-- Category grid -->
+      <div class="mock-section-label">◈ CHOOSE YOUR CATEGORY</div>
+      <div class="category-grid">
+        <div class="cat-card c1">
+          <div class="cat-icon">🫧</div>
+          <div class="cat-name">SORTING</div>
+          <div class="cat-count">5 algorithms</div>
+          <div class="cat-tags">
+            <span class="cat-tag">BUBBLE</span>
+            <span class="cat-tag">QUICK</span>
+            <span class="cat-tag">MERGE</span>
+          </div>
+        </div>
+        <div class="cat-card c2">
+          <div class="cat-icon">🔍</div>
+          <div class="cat-name">SEARCHING</div>
+          <div class="cat-count">2 algorithms</div>
+          <div class="cat-tags">
+            <span class="cat-tag">BINARY</span>
+            <span class="cat-tag">LINEAR</span>
+          </div>
+        </div>
+        <div class="cat-card c3">
+          <div class="cat-icon">📦</div>
+          <div class="cat-name">DATA STRUCTURES</div>
+          <div class="cat-count">3 algorithms</div>
+          <div class="cat-tags">
+            <span class="cat-tag">STACK</span>
+            <span class="cat-tag">QUEUE</span>
+            <span class="cat-tag">LINKED LIST</span>
+          </div>
+        </div>
+        <div class="cat-card c4">
+          <div class="cat-icon">🌳</div>
+          <div class="cat-name">TREES</div>
+          <div class="cat-count">2 algorithms</div>
+          <div class="cat-tags">
+            <span class="cat-tag">BST</span>
+            <span class="cat-tag">TRAVERSAL</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 6 — VISUALIZER PAGE MOCKUP
+══════════════════════════════════════════ -->
+<div style="border-top: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-title">06 / LAYOUT MOCKUP</div>
+    <div class="section-heading">Visualizer <span>Page Redesign</span></div>
+    <div class="viz-mockup">
+      <!-- Navbar -->
+      <div class="mock-nav">
+        <div class="mock-nav-logo">DSA<span>QUEST</span></div>
+        <div style="font-family:var(--font-pixel); font-size:8px; color:var(--ink-muted); margin-left:16px;">▶ BUBBLE SORT</div>
+        <div class="mock-nav-links">
+          <a class="mock-nav-link" href="#">☰ SIDEBAR</a>
+        </div>
+      </div>
+      <div class="viz-layout">
+        <!-- Sidebar -->
+        <div class="viz-sidebar">
+          <div class="sidebar-cat">◈ SORTING</div>
+          <div class="sidebar-item active"><div class="dot"></div>Bubble Sort</div>
+          <div class="sidebar-item"><div class="dot"></div>Quick Sort</div>
+          <div class="sidebar-item"><div class="dot"></div>Merge Sort</div>
+          <div class="sidebar-item"><div class="dot"></div>Insertion Sort</div>
+          <div class="sidebar-cat">◈ SEARCHING</div>
+          <div class="sidebar-item"><div class="dot"></div>Binary Search</div>
+          <div class="sidebar-cat">◈ STRUCTURES</div>
+          <div class="sidebar-item"><div class="dot"></div>Stack</div>
+          <div class="sidebar-item"><div class="dot"></div>Queue</div>
+          <div class="sidebar-item"><div class="dot"></div>Linked List</div>
+          <div class="sidebar-cat">◈ TREES</div>
+          <div class="sidebar-item"><div class="dot"></div>BST</div>
+        </div>
+        <!-- Main -->
+        <div class="viz-main">
+          <!-- Info bar -->
+          <div class="viz-info-bar">
+            <div class="viz-algo-name">BUBBLE SORT</div>
+            <div class="complexity-badge">TIME: O(n²)</div>
+            <div class="complexity-badge">SPACE: O(1)</div>
+            <div style="margin-left:auto;"><span class="badge badge-easy">▲ EASY</span></div>
+          </div>
+          <!-- Canvas -->
+          <div class="viz-canvas-area">
+            <div class="viz-step-pill">◆ Comparing index 3 and 4 — swap needed</div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-sorted" style="height:80px;"></div><div class="viz-bar-val">1</div></div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-sorted" style="height:50px;"></div><div class="viz-bar-val">3</div></div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-sorted" style="height:60px;"></div><div class="viz-bar-val">4</div></div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-compare" style="height:100px;"></div><div class="viz-bar-val">7</div></div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-compare" style="height:40px;"></div><div class="viz-bar-val">2</div></div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-default" style="height:70px;"></div><div class="viz-bar-val">5</div></div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-default" style="height:85px;"></div><div class="viz-bar-val">6</div></div>
+            <div class="viz-bar-wrap"><div class="viz-bar bar-default" style="height:35px;"></div><div class="viz-bar-val">9</div></div>
+          </div>
+          <!-- Controls -->
+          <div class="viz-controls">
+            <button class="play-btn">⏮</button>
+            <button class="play-btn">◀</button>
+            <button class="play-btn active">⏸</button>
+            <button class="play-btn">▶</button>
+            <button class="play-btn">⏭</button>
+            <div style="flex:1; min-width:80px;">
+              <div class="progress-track"><div class="progress-fill"></div></div>
+            </div>
+            <div class="step-counter">5 / 12</div>
+            <div class="speed-label">1x</div>
+          </div>
+        </div>
+        <!-- Code panel -->
+        <div class="viz-right">
+          <div class="viz-code-header">◆ PYTHON EDITOR</div>
+          <div class="viz-code-body">
+            <div class="code-line"><span class="code-ln">1</span> <span class="code-kw">def</span> <span class="code-fn">bubble_sort</span>(arr):</div>
+            <div class="code-line"><span class="code-ln">2</span>   n = len(arr)</div>
+            <div class="code-line code-active"><span class="code-ln">3</span>   <span class="code-kw">for</span> i in range(n):</div>
+            <div class="code-line"><span class="code-ln">4</span>     <span class="code-kw">for</span> j in range(n-i-1):</div>
+            <div class="code-line"><span class="code-ln">5</span>       <span class="code-kw">if</span> arr[j] &gt; arr[j+1]:</div>
+            <div class="code-line"><span class="code-ln">6</span>         arr[j], arr[j+1] = \</div>
+            <div class="code-line"><span class="code-ln">7</span>           arr[j+1], arr[j]</div>
+          </div>
+          <div class="viz-run-row">
+            <div class="viz-run-btn">▶ RUN CODE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 7 — MOTION / INTERACTION NOTES
+══════════════════════════════════════════ -->
+<div class="bg-alt" style="border-top: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-title">07 / MOTION &amp; INTERACTION</div>
+    <div class="section-heading">Micro-interaction <span>Playbook</span></div>
+    <div class="motion-grid">
+
+      <div class="motion-card">
+        <div class="motion-card-title">BUTTON PIXEL POP</div>
+        <div class="motion-card-body">Hard box-shadow shrinks on click — gives the illusion of pressing a physical key. No ease curves, instant snap back.</div>
+        <div class="motion-demo">
+          <button class="motion-btn-before">▶ DEFAULT</button>
+          <div class="arrow-label">→ click →</div>
+          <button class="motion-btn-after">▶ PRESSED</button>
+        </div>
+        <div class="motion-card-body" style="margin-top:12px; font-size:15px; font-family:var(--font-code); color:var(--ink-muted);">
+          box-shadow: 4px 4px 0 #1a1f3c → 2px 2px 0<br>
+          transform: translate(2px, 2px)<br>
+          transition: 80ms steps(1)
+        </div>
+      </div>
+
+      <div class="motion-card">
+        <div class="motion-card-title">VISUALIZER BAR SWAP</div>
+        <div class="motion-card-body">Bars animate height change with steps() easing — choppy, game-like movement, not smooth interpolation. Gives it a sprite-animation feel.</div>
+        <div class="motion-demo">
+          <div class="bar-anim-demo">
+            <div class="bar-anim bar-compare" style="height:70px;"></div>
+            <div class="bar-anim bar-swap" style="height:35px;"></div>
+            <div class="bar-anim bar-default" style="height:55px;"></div>
+            <div class="bar-anim bar-sorted" style="height:90px;"></div>
+          </div>
+        </div>
+        <div class="motion-card-body" style="margin-top:12px; font-size:15px; font-family:var(--font-code); color:var(--ink-muted);">
+          transition: height 200ms steps(4, end)<br>
+          background: instant color change
+        </div>
+      </div>
+
+      <div class="motion-card">
+        <div class="motion-card-title">ACTIVE LINE HIGHLIGHT</div>
+        <div class="motion-card-body">The currently executing line in Monaco gets a cyan left border and faint background — consistent with the sidebar active state. Feels like the cursor of a game.</div>
+        <div class="motion-demo" style="flex-direction:column; align-items:flex-start;">
+          <div style="font-family:var(--font-code); font-size:13px; color:#7788cc; line-height:2;">
+            <div style="padding:2px 8px;">2 &nbsp; n = len(arr)</div>
+            <div class="highlight-demo">3 &nbsp; for i in range(n): &nbsp;◀</div>
+            <div style="padding:2px 8px;">4 &nbsp; &nbsp; for j in range(n-i-1):</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="motion-card">
+        <div class="motion-card-title">LOADING SPINNER</div>
+        <div class="motion-card-body">Pixel spinner uses steps() animation instead of smooth rotation — eight discrete positions, exactly like an 8-bit loading icon. Used while code executes on backend.</div>
+        <div class="motion-demo" style="gap:24px; align-items:center;">
+          <div class="pixel-spinner"></div>
+          <div style="font-family:var(--font-retro); font-size:14px; color:var(--ink-muted);">Running your code...</div>
+        </div>
+        <div class="motion-card-body" style="margin-top:12px; font-size:15px; font-family:var(--font-code); color:var(--ink-muted);">
+          animation: spin 0.6s steps(8, end) infinite
+        </div>
+      </div>
+
+      <div class="motion-card">
+        <div class="motion-card-title">CARD HOVER LIFT</div>
+        <div class="motion-card-body">Algorithm cards translate up-left and box-shadow grows on hover. No transform-origin tricks — pure translate for that flat pixel-art feel.</div>
+        <div class="motion-demo">
+          <div class="algo-card" style="transform:translate(-3px,-3px); box-shadow:9px 9px 0 var(--ink);">
+            <div class="algo-card-icon" style="background:#e8f4ff;">⚡</div>
+            <div class="algo-card-body">
+              <div class="algo-card-name">QUICK SORT</div>
+              <div class="algo-card-tags"><span class="badge badge-medium" style="font-size:7px; padding:3px 6px;">MEDIUM</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="motion-card-body" style="margin-top:12px; font-size:15px; font-family:var(--font-code); color:var(--ink-muted);">
+          transform: translate(-3px, -3px)<br>
+          box-shadow: 9px 9px 0 — on :hover
+        </div>
+      </div>
+
+      <div class="motion-card">
+        <div class="motion-card-title">DECORATIVE FLOAT</div>
+        <div class="motion-card-body">Background pixel decorations (◆ ✦ ◇ ⬡) float gently up and down on the hero page. Each has a different delay to avoid sync. Pure CSS, no JS.</div>
+        <div class="motion-demo">
+          <div style="display:flex; gap:24px; font-size:28px; opacity:0.5;">
+            <span style="animation:float 2s ease-in-out infinite; display:inline-block;">◆</span>
+            <span style="animation:float 2.5s ease-in-out 0.4s infinite; display:inline-block;">✦</span>
+            <span style="animation:float 3s ease-in-out 0.8s infinite; display:inline-block;">◇</span>
+            <span style="animation:float 2.2s ease-in-out 1.2s infinite; display:inline-block;">⬡</span>
+          </div>
+        </div>
+        <div class="motion-card-body" style="margin-top:12px; font-size:15px; font-family:var(--font-code); color:var(--ink-muted);">
+          animation: float 3s ease-in-out infinite<br>
+          translateY(0) → translateY(-12px) → back
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="concept-footer">
+  <div class="concept-footer-title">◆ DSA QUEST — DESIGN CONCEPT v1.0 ◆</div>
+  <div class="concept-footer-sub">Ready to implement · Press Start 2P (headings) + Share Tech Mono (body) + #C8D4F0 base + #00D4D4 cyan accent</div>
+</div>
+
+</body>
+</html>

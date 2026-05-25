@@ -45,8 +45,10 @@ export default function TreeVisualizer() {
         .attr('x', width / 2)
         .attr('y', height / 2)
         .attr('text-anchor', 'middle')
-        .attr('fill', 'var(--text-tertiary)')
-        .attr('font-size', 16)
+        .attr('fill', 'var(--ink-muted)')
+        .attr('font-family', 'var(--font-body)')
+        .attr('font-style', 'italic')
+        .attr('font-size', 14)
         .text('Tree is empty');
       return;
     }

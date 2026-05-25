@@ -33,17 +33,18 @@ export default function StackQueueVisualizer() {
           );
         })}
         {frame.items.length === 0 && (
-          <div style={{ color: 'var(--text-tertiary)', fontStyle: 'italic' }}>Empty Stack</div>
+          <div className="ds-empty">Empty Stack</div>
         )}
         <div className="ds-label">← BOTTOM</div>
       </div>
     );
   }
 
-  // Queue: horizontal layout
+  // Queue: horizontal layout — uses .viz-hscroll so long queues remain
+  // fully visible (leading edge can't be clipped by centered overflow).
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', gap: '16px' }}>
-      <div style={{ display: 'flex', gap: '8px' }}>
+    <div className="viz-hscroll">
+      <div className="ds-queue-row">
         <div className="ds-label">FRONT →</div>
         {frame.items.map((item, idx) => (
           <div
@@ -54,7 +55,7 @@ export default function StackQueueVisualizer() {
           </div>
         ))}
         {frame.items.length === 0 && (
-          <div style={{ color: 'var(--text-tertiary)', fontStyle: 'italic' }}>Empty Queue</div>
+          <div className="ds-empty">Empty Queue</div>
         )}
         <div className="ds-label">← REAR</div>
       </div>

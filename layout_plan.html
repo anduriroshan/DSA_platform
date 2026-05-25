@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DSA Quest — Layout Planning</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Share+Tech+Mono&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-base:       #c8d4f0;
+      --bg-card:       #dce6f8;
+      --bg-dark:       #1a1f3c;
+      --bg-darker:     #0f1224;
+      --accent-cyan:   #00d4d4;
+      --accent-yellow: #f5c800;
+      --accent-coral:  #ff6b6b;
+      --accent-green:  #00e676;
+      --accent-purple: #cc66ff;
+      --ink:           #1a1f3c;
+      --ink-muted:     #4a5080;
+      --shadow-px:     4px 4px 0px var(--ink);
+      --shadow-px-lg:  6px 6px 0px var(--ink);
+      --font-pixel:    'Press Start 2P', monospace;
+      --font-body:     'Share Tech Mono', monospace;
+      --font-code:     'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg-base); color: var(--ink); font-family: var(--font-body); font-size: 14px; line-height: 1.8; }
+
+    /* ── Layout ── */
+    .page-header {
+      background: var(--bg-darker);
+      color: white;
+      padding: 18px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 4px solid var(--accent-cyan);
+    }
+    .page-header-title { font-family: var(--font-pixel); font-size: 10px; color: var(--accent-cyan); letter-spacing: 0.1em; }
+    .page-header-meta  { font-family: var(--font-body); font-size: 13px; color: #8899cc; }
+
+    .section { padding: 72px 60px; max-width: 1280px; margin: 0 auto; }
+    .section-eyebrow { font-family: var(--font-pixel); font-size: 8px; color: var(--ink-muted); letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px; }
+    .section-heading { font-family: var(--font-pixel); font-size: 18px; color: var(--ink); margin-bottom: 12px; line-height: 1.7; }
+    .section-heading span { color: var(--accent-cyan); }
+    .section-sub { font-family: var(--font-body); font-size: 14px; color: var(--ink-muted); margin-bottom: 48px; max-width: 720px; line-height: 1.9; }
+    .divider { border: none; border-top: 4px solid var(--ink); }
+
+    /* ── Cards ── */
+    .px-card {
+      border: 3px solid var(--ink);
+      box-shadow: var(--shadow-px);
+      background: var(--bg-card);
+    }
+    .px-card-header {
+      padding: 10px 16px;
+      background: var(--ink);
+      color: var(--accent-cyan);
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      letter-spacing: 0.1em;
+    }
+    .px-card-body { padding: 24px; }
+
+    /* ── Tags ── */
+    .tag {
+      font-family: var(--font-pixel);
+      font-size: 7px;
+      padding: 4px 8px;
+      border: 2px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      display: inline-block;
+    }
+    .tag-cyan   { background: var(--accent-cyan);   color: var(--ink); }
+    .tag-yellow { background: var(--accent-yellow); color: var(--ink); }
+    .tag-coral  { background: var(--accent-coral);  color: white; }
+    .tag-green  { background: var(--accent-green);  color: var(--ink); }
+    .tag-purple { background: var(--accent-purple); color: white; }
+
+    /* ── Buttons ── */
+    .btn {
+      font-family: var(--font-pixel);
+      font-size: 9px;
+      padding: 10px 18px;
+      border: 2px solid var(--ink);
+      box-shadow: 3px 3px 0 var(--ink);
+      cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
+    }
+    .btn-cyan   { background: var(--accent-cyan); color: var(--ink); }
+    .btn-ghost  { background: transparent; color: var(--ink); }
+
+    /* ════════════════════════════════════════
+       SECTION 1 — THE PROBLEM
+    ════════════════════════════════════════ */
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      margin-bottom: 48px;
+    }
+    .problem-card { border: 3px solid var(--ink); box-shadow: var(--shadow-px); background: white; overflow: hidden; }
+    .problem-card-label {
+      padding: 10px 16px;
+      font-family: var(--font-pixel);
+      font-size: 8px;
+      letter-spacing: 0.08em;
+    }
+    .label-old { background: #ffe0e0; color: var(--accent-coral); border-bottom: 3px solid var(--ink); }
+    .label-new { background: #e0fff0; color: #008844; border-bottom: 3px solid var(--ink); }
+
+    /* ── Old layout diagram ── */
+    .layout-diagram { display: flex; height: 220px; border-top: none; }
+    .ld-sidebar { width: 80px; background: #1a1f3c; display: flex; flex-direction: column; padding: 8px; gap: 6px; border-right: 2px solid var(--ink); }
+    .ld-sidebar-item { background: #2a3050; height: 10px; border: 1px solid #334; }
+    .ld-sidebar-item.active { background: var(--accent-cyan); }
+    .ld-main { flex: 1; display: flex; flex-direction: column; }
+    .ld-infobar { height: 28px; background: var(--bg-card); border-bottom: 2px solid var(--ink); display: flex; align-items: center; padding: 0 10px; gap: 6px; }
+    .ld-infobar-pill { height: 10px; border: 1px solid var(--ink); }
+    .ld-body { flex: 1; display: flex; }
+    .ld-viz { flex: 1; background: #e0eaff; display: flex; align-items: flex-end; justify-content: center; padding: 8px; gap: 4px; position: relative; }
+    .ld-bar { width: 18px; border: 1px solid var(--ink); }
+    .ld-code { width: 110px; background: #0f1224; border-left: 2px solid var(--ink); padding: 8px; display: flex; flex-direction: column; gap: 4px; }
+    .ld-code-line { height: 6px; background: #334466; border-radius: 0; }
+    .ld-code-line.active { background: var(--accent-cyan); width: 70%; }
+    .ld-controls { height: 28px; background: #0f1224; border-top: 2px solid var(--ink); display: flex; align-items: center; padding: 0 8px; gap: 4px; }
+    .ld-ctrl-btn { width: 18px; height: 14px; background: #2a3050; border: 1px solid #445; }
+    .ld-label {
+      position: absolute;
+      top: 6px; left: 50%;
+      transform: translateX(-50%);
+      font-family: var(--font-pixel);
+      font-size: 6px;
+      background: rgba(0,0,0,0.6);
+      color: white;
+      padding: 3px 6px;
+      border: 1px solid var(--accent-cyan);
+      white-space: nowrap;
+    }
+
+    /* ── New layout diagram ── */
+    .ld2-body { flex: 1; display: flex; }
+    .ld2-content { flex: 1; display: flex; flex-direction: column; }
+    .ld2-tabs { height: 28px; background: var(--bg-card); border-bottom: 2px solid var(--ink); display: flex; align-items: flex-end; padding: 0 8px; gap: 2px; }
+    .ld2-tab { height: 20px; padding: 0 8px; font-family: var(--font-pixel); font-size: 6px; display: flex; align-items: center; border: 1px solid var(--ink); border-bottom: none; background: white; }
+    .ld2-tab.active { background: var(--accent-cyan); color: var(--ink); }
+    .ld2-main-area { flex: 1; display: flex; flex-direction: column; padding: 8px; gap: 6px; background: white; }
+    .ld2-text-block { height: 12px; background: #dde4f4; }
+    .ld2-pseudo-block { height: 50px; background: #1a1f3c; border: 1px solid var(--ink); padding: 6px; display: flex; flex-direction: column; gap: 3px; }
+    .ld2-pseudo-line { height: 5px; background: #334466; }
+    .ld2-pseudo-line.kw { background: var(--accent-purple); width: 30%; }
+    .ld2-editor { height: 55px; background: #0f1224; border: 1px solid var(--ink); padding: 6px; display: flex; flex-direction: column; gap: 3px; }
+    .ld2-editor-line { height: 5px; background: #334466; }
+    .ld2-ad-strip { height: 22px; background: repeating-linear-gradient(90deg, #dde4f4 0px, #dde4f4 8px, #c8d4f0 8px, #c8d4f0 10px); border-top: 1px dashed var(--ink-muted); display: flex; align-items: center; justify-content: center; }
+    .ld2-ad-label { font-family: var(--font-pixel); font-size: 5px; color: var(--ink-muted); }
+    .ld2-viz-panel { width: 80px; background: #e8f0ff; border-left: 2px solid var(--ink); display: flex; flex-direction: column; }
+    .ld2-viz-header { height: 20px; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+    .ld2-viz-canvas { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 3px; padding: 4px; }
+    .ld2-viz-bar { width: 12px; border: 1px solid var(--ink); }
+    .ld2-viz-ctrl { height: 18px; background: #1a1f3c; border-top: 1px solid var(--ink); display: flex; align-items: center; justify-content: center; gap: 2px; }
+    .ld2-viz-btn { width: 10px; height: 8px; background: #2a3050; border: 1px solid #445; }
+    .ld2-collapsed { width: 28px; background: #1a1f3c; border-left: 2px solid var(--ink); display: flex; align-items: center; justify-content: center; }
+    .ld2-collapsed-label { font-family: var(--font-pixel); font-size: 5px; color: var(--accent-cyan); writing-mode: vertical-rl; letter-spacing: 0.2em; }
+
+    /* ════════════════════════════════════════
+       SECTION 2 — THREE LAYOUT OPTIONS
+    ════════════════════════════════════════ */
+    .options-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; margin-bottom: 48px; }
+    .option-card { border: 3px solid var(--ink); box-shadow: var(--shadow-px-lg); background: white; overflow: hidden; cursor: pointer; transition: transform 0.1s, box-shadow 0.1s; }
+    .option-card:hover { transform: translate(-3px,-3px); box-shadow: 9px 9px 0 var(--ink); }
+    .option-card.recommended { border-color: var(--accent-cyan); box-shadow: var(--shadow-px-lg), 0 0 0 3px var(--accent-cyan); }
+    .option-header { padding: 14px 16px 10px; border-bottom: 3px solid var(--ink); }
+    .option-name { font-family: var(--font-pixel); font-size: 9px; margin-bottom: 6px; }
+    .option-tagline { font-family: var(--font-body); font-size: 13px; color: var(--ink-muted); }
+    .option-diagram { height: 180px; display: flex; background: #f0f4ff; border-bottom: 2px solid var(--ink); }
+    .option-body { padding: 16px; }
+    .option-pros { margin-bottom: 10px; }
+    .option-pros-title { font-family: var(--font-pixel); font-size: 7px; color: #008844; margin-bottom: 6px; }
+    .option-cons-title { font-family: var(--font-pixel); font-size: 7px; color: var(--accent-coral); margin-bottom: 6px; }
+    .option-list { font-family: var(--font-body); font-size: 13px; color: var(--ink-muted); line-height: 1.9; list-style: none; }
+    .option-list li::before { content: "▶ "; color: var(--accent-cyan); font-size: 10px; }
+    .option-list.cons li::before { content: "■ "; color: var(--accent-coral); font-size: 10px; }
+    .rec-badge { font-family: var(--font-pixel); font-size: 7px; padding: 4px 10px; background: var(--accent-cyan); border: 2px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-top: 10px; }
+
+    /* Option diagram mini blocks */
+    .od-sidebar { width: 24px; background: #1a1f3c; border-right: 2px solid var(--ink); }
+    .od-main    { flex: 1; display: flex; flex-direction: column; }
+    .od-topbar  { height: 16px; background: var(--bg-card); border-bottom: 1px solid var(--ink); }
+    .od-area    { flex: 1; }
+    .od-right   { border-left: 2px solid var(--ink); }
+    .od-bottom  { height: 20px; border-top: 2px solid var(--ink); }
+    .od-label   { font-family: var(--font-pixel); font-size: 5px; color: var(--ink-muted); padding: 3px 4px; display: block; text-align: center; line-height: 1.6; }
+    .od-ad      { background: repeating-linear-gradient(90deg, #dde4f4 0, #dde4f4 6px, #c8d4f0 6px, #c8d4f0 8px); }
+    .od-tabs    { height: 14px; background: var(--bg-card); border-bottom: 1px solid var(--ink); display: flex; }
+    .od-tab     { flex: 1; border-right: 1px solid var(--ink); }
+    .od-tab.a   { background: var(--accent-cyan); }
+
+    /* ════════════════════════════════════════
+       SECTION 3 — RECOMMENDED LAYOUT DEEP DIVE
+    ════════════════════════════════════════ */
+    .deep-dive-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+
+    /* Full page wireframe */
+    .wireframe {
+      border: 4px solid var(--ink);
+      box-shadow: var(--shadow-px-lg);
+      background: var(--bg-base);
+      overflow: hidden;
+      font-family: var(--font-pixel);
+    }
+    .wf-nav {
+      height: 48px;
+      background: rgba(200,212,240,0.9);
+      border-bottom: 3px solid var(--ink);
+      display: flex;
+      align-items: center;
+      padding: 0 16px;
+      gap: 12px;
+    }
+    .wf-nav-logo { font-size: 9px; color: var(--ink); }
+    .wf-nav-logo span { color: var(--accent-cyan); }
+    .wf-nav-spacer { flex: 1; }
+    .wf-ad-top {
+      height: 52px;
+      background: repeating-linear-gradient(90deg, #e8eeff 0, #e8eeff 12px, #d4dcf8 12px, #d4dcf8 14px);
+      border-bottom: 2px dashed var(--ink-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .wf-ad-label { font-size: 6px; color: var(--ink-muted); letter-spacing: 0.1em; }
+    .wf-body { display: flex; height: 520px; }
+    .wf-sidebar {
+      width: 170px;
+      background: var(--bg-darker);
+      border-right: 3px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      padding: 10px 0;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .wf-sidebar-cat { font-size: 6px; color: #445566; letter-spacing: 0.15em; padding: 8px 12px 3px; }
+    .wf-sidebar-item { font-family: var(--font-body); font-size: 11px; color: #8899cc; padding: 5px 12px; border-left: 2px solid transparent; display: flex; align-items: center; gap: 6px; }
+    .wf-sidebar-item.active { border-left-color: var(--accent-cyan); color: var(--accent-cyan); }
+    .wf-sidebar-dot { width: 4px; height: 4px; background: currentColor; flex-shrink: 0; }
+    .wf-sidebar-ad { margin: auto 8px 8px; height: 100px; background: repeating-linear-gradient(0deg, #1e2440 0, #1e2440 6px, #191d38 6px, #191d38 8px); border: 1px dashed #334; display: flex; align-items: center; justify-content: center; }
+    .wf-center { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .wf-infobar {
+      height: 38px;
+      background: var(--bg-card);
+      border-bottom: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      padding: 0 14px;
+      gap: 10px;
+    }
+    .wf-algo-name { font-size: 8px; }
+    .wf-pill { font-size: 6px; padding: 3px 7px; border: 1px solid var(--ink); box-shadow: 1px 1px 0 var(--ink); background: var(--bg-base); }
+    .wf-tabs {
+      display: flex;
+      border-bottom: 2px solid var(--ink);
+      background: var(--bg-card);
+    }
+    .wf-tab {
+      font-size: 7px;
+      padding: 8px 14px;
+      border-right: 2px solid var(--ink);
+      cursor: pointer;
+    }
+    .wf-tab.active { background: white; color: var(--ink); border-bottom: 2px solid white; margin-bottom: -2px; }
+    .wf-tab-content { flex: 1; overflow: hidden; background: white; }
+    .wf-learn-area { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .wf-text-line { height: 8px; background: #e0e8f8; }
+    .wf-text-line.short { width: 60%; }
+    .wf-text-line.med   { width: 80%; }
+    .wf-pseudo-block {
+      background: #0f1224;
+      border: 2px solid var(--ink);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .wf-pseudo-header { font-size: 6px; color: var(--accent-cyan); margin-bottom: 4px; }
+    .wf-pseudo-line { height: 6px; background: #334466; }
+    .wf-pseudo-line.kw { background: var(--accent-purple); width: 25%; }
+    .wf-pseudo-line.indent { margin-left: 12px; width: 55%; }
+    .wf-code-block {
+      background: #0f1224;
+      border: 2px solid var(--ink);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .wf-code-header { font-size: 6px; color: var(--accent-cyan); margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .wf-code-line { height: 6px; background: #334466; }
+    .wf-code-line.active { background: rgba(0,212,212,0.3); border-left: 2px solid var(--accent-cyan); }
+    .wf-run-btn { font-size: 6px; padding: 4px 10px; background: var(--accent-cyan); border: 1px solid var(--ink); box-shadow: 2px 2px 0 var(--ink); display: inline-block; margin-top: 6px; }
+    .wf-ad-strip {
+      height: 44px;
+      background: repeating-linear-gradient(90deg, #f0f4ff 0, #f0f4ff 14px, #e4ecfc 14px, #e4ecfc 16px);
+      border-top: 2px dashed var(--ink-muted);
+      border-bottom: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    /* Viz panel */
+    .wf-viz {
+      width: 200px;
+      background: #e8f0ff;
+      border-left: 3px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .wf-viz-header {
+      height: 32px;
+      background: var(--ink);
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      gap: 8px;
+    }
+    .wf-viz-title { font-size: 6px; color: var(--accent-cyan); flex: 1; }
+    .wf-viz-toggle { font-size: 6px; color: white; padding: 2px 5px; border: 1px solid #445; background: #2a3050; }
+    .wf-viz-canvas {
+      flex: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 5px;
+      padding: 12px 12px 8px;
+      background: #eef3ff;
+    }
+    .wf-viz-bar { width: 18px; border: 2px solid var(--ink); }
+    .wf-viz-step {
+      padding: 6px 10px;
+      background: rgba(26,31,60,0.85);
+      border: 1px solid var(--accent-cyan);
+      font-size: 6px;
+      color: white;
+      margin: 0 8px;
+      text-align: center;
+      line-height: 1.6;
+    }
+    .wf-viz-controls {
+      height: 32px;
+      background: var(--bg-darker);
+      border-top: 2px solid var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .wf-ctrl { width: 16px; height: 12px; background: #2a3050; border: 1px solid #445; }
+    .wf-ctrl.active { background: var(--accent-cyan); }
+    /* Collapsed viz */
+    .wf-viz-collapsed {
+      width: 36px;
+      background: #1a1f3c;
+      border-left: 3px solid var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .wf-viz-collapsed-label {
+      font-size: 5px;
+      color: var(--accent-cyan);
+      writing-mode: vertical-rl;
+      letter-spacing: 0.2em;
+    }
+    .wf-viz-collapsed-btn {
+      width: 22px;
+      height: 22px;
+      background: var(--accent-cyan);
+      border: 1px solid var(--ink);
+      box-shadow: 2px 2px 0 var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+    }
+
+    /* ════════════════════════════════════════
+       SECTION 4 — AD PLACEMENT MAP
+    ════════════════════════════════════════ */
+    .ad-map-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+    .ad-slot-card { border: 3px solid var(--ink); box-shadow: var(--shadow-px); background: white; overflow: hidden; }
+    .ad-slot-header { padding: 10px 14px; background: var(--ink); color: var(--accent-yellow); font-family: var(--font-pixel); font-size: 7px; letter-spacing: 0.1em; border-bottom: 2px solid var(--ink); }
+    .ad-slot-body { padding: 16px; }
+    .ad-slot-name { font-family: var(--font-pixel); font-size: 9px; margin-bottom: 8px; }
+    .ad-slot-size { font-family: var(--font-code); font-size: 12px; color: var(--accent-cyan); margin-bottom: 8px; }
+    .ad-slot-desc { font-family: var(--font-body); font-size: 13px; color: var(--ink-muted); line-height: 1.8; margin-bottom: 12px; }
+    .ad-slot-preview {
+      background: repeating-linear-gradient(90deg, #f0f4ff 0, #f0f4ff 12px, #e4ecfc 12px, #e4ecfc 14px);
+      border: 2px dashed var(--ink-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ad-slot-preview-label { font-family: var(--font-pixel); font-size: 7px; color: var(--ink-muted); letter-spacing: 0.1em; }
+
+    /* ════════════════════════════════════════
+       SECTION 5 — TAB CONTENT BREAKDOWN
+    ════════════════════════════════════════ */
+    .tabs-breakdown { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .tab-card { border: 3px solid var(--ink); box-shadow: var(--shadow-px); overflow: hidden; }
+    .tab-card-header { padding: 12px 16px; font-family: var(--font-pixel); font-size: 8px; border-bottom: 3px solid var(--ink); }
+    .tab-card-body { padding: 20px; background: white; }
+    .tab-card-body ul { list-style: none; }
+    .tab-card-body li { font-family: var(--font-body); font-size: 13px; color: var(--ink-muted); padding: 5px 0; border-bottom: 1px dashed #ccd4e8; line-height: 1.8; }
+    .tab-card-body li::before { content: "▶ "; color: var(--accent-cyan); font-size: 10px; }
+    .tab-card-body li:last-child { border-bottom: none; }
+    .tab-h-learn  { background: #e0fff0; color: #008844; }
+    .tab-h-pseudo { background: #f0e8ff; color: #6600cc; }
+    .tab-h-code   { background: #e0f8ff; color: #006688; }
+
+    /* ════════════════════════════════════════
+       SECTION 6 — VIZ PANEL STATES
+    ════════════════════════════════════════ */
+    .viz-states-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+    .viz-state-card { border: 3px solid var(--ink); box-shadow: var(--shadow-px); background: white; overflow: hidden; }
+    .viz-state-header { padding: 10px 14px; background: var(--ink); color: var(--accent-cyan); font-family: var(--font-pixel); font-size: 7px; letter-spacing: 0.1em; }
+    .viz-state-diagram { height: 160px; display: flex; border-bottom: 2px solid var(--ink); background: #f5f8ff; position: relative; }
+    .viz-state-body { padding: 14px; }
+    .viz-state-desc { font-family: var(--font-body); font-size: 13px; color: var(--ink-muted); line-height: 1.8; }
+
+    /* ════════════════════════════════════════
+       SECTION 7 — IMPLEMENTATION PHASES
+    ════════════════════════════════════════ */
+    .phases-list { display: flex; flex-direction: column; gap: 0; }
+    .phase {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      border: 3px solid var(--ink);
+      border-bottom: none;
+      background: white;
+    }
+    .phase:last-child { border-bottom: 3px solid var(--ink); }
+    .phase-num {
+      background: var(--ink);
+      color: var(--accent-cyan);
+      font-family: var(--font-pixel);
+      font-size: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      border-right: 3px solid var(--ink);
+      text-align: center;
+      line-height: 2;
+    }
+    .phase-body { padding: 20px 24px; }
+    .phase-title { font-family: var(--font-pixel); font-size: 10px; margin-bottom: 8px; }
+    .phase-desc { font-family: var(--font-body); font-size: 13px; color: var(--ink-muted); line-height: 1.9; margin-bottom: 12px; }
+    .phase-tasks { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    /* Footer */
+    .concept-footer { background: var(--bg-darker); border-top: 4px solid var(--ink); padding: 40px 60px; text-align: center; }
+    .concept-footer-title { font-family: var(--font-pixel); font-size: 10px; color: var(--accent-cyan); margin-bottom: 10px; letter-spacing: 0.1em; }
+    .concept-footer-sub { font-family: var(--font-body); font-size: 13px; color: #556699; }
+  </style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-header-title">◆ DSAQUEST — LAYOUT REDESIGN PLAN</div>
+  <div class="page-header-meta">Layout Planning · May 2026</div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 0 — THE CORE PROBLEM
+══════════════════════════════════════════ -->
+<div style="border-bottom: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-eyebrow">00 / THE PROBLEM</div>
+    <div class="section-heading">What's wrong with the <span>current layout?</span></div>
+    <div class="section-sub">The current design puts the animation first and the code second — like a theatre where the stage takes 60% of the space and the script is crammed in a side pocket. For a learning platform the priority should be reversed. Learners need theory, pseudocode, and code editor front and centre, with visualization as an on-demand tool.</div>
+
+    <div class="problem-grid">
+      <!-- OLD -->
+      <div class="problem-card">
+        <div class="problem-card-label label-old">■ CURRENT — Visualization-First</div>
+        <div class="layout-diagram">
+          <div class="ld-sidebar">
+            <div style="font-family:var(--font-pixel);font-size:5px;color:#556;margin-bottom:6px;">NAV</div>
+            <div class="ld-sidebar-item active"></div>
+            <div class="ld-sidebar-item"></div>
+            <div class="ld-sidebar-item"></div>
+            <div class="ld-sidebar-item"></div>
+            <div class="ld-sidebar-item"></div>
+          </div>
+          <div class="ld-main">
+            <div class="ld-infobar">
+              <div class="ld-infobar-pill" style="width:50px;background:var(--ink);"></div>
+              <div class="ld-infobar-pill" style="width:30px;background:var(--bg-base);"></div>
+            </div>
+            <div class="ld-body">
+              <div class="ld-viz">
+                <div class="ld-label">VISUALIZATION (main)</div>
+                <div class="ld-bar" style="height:60px;background:#3a4f7a;"></div>
+                <div class="ld-bar" style="height:90px;background:var(--accent-yellow);"></div>
+                <div class="ld-bar" style="height:40px;background:var(--accent-coral);"></div>
+                <div class="ld-bar" style="height:75px;background:#3a4f7a;"></div>
+                <div class="ld-bar" style="height:55px;background:var(--accent-green);"></div>
+              </div>
+              <div class="ld-code">
+                <div style="font-family:var(--font-pixel);font-size:5px;color:var(--accent-cyan);margin-bottom:4px;">CODE</div>
+                <div class="ld-code-line"></div>
+                <div class="ld-code-line active"></div>
+                <div class="ld-code-line"></div>
+                <div class="ld-code-line" style="width:50%"></div>
+                <div class="ld-code-line"></div>
+                <div class="ld-code-line" style="width:60%"></div>
+              </div>
+            </div>
+            <div class="ld-controls">
+              <div class="ld-ctrl-btn"></div>
+              <div class="ld-ctrl-btn"></div>
+              <div class="ld-ctrl-btn" style="background:var(--accent-cyan);"></div>
+              <div class="ld-ctrl-btn"></div>
+              <div style="flex:1;height:6px;background:#2a3050;margin:0 4px;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;background:#fff5f5;">
+          <div style="font-family:var(--font-pixel);font-size:7px;color:var(--accent-coral);margin-bottom:8px;">PROBLEMS</div>
+          <ul style="font-family:var(--font-body);font-size:13px;color:var(--ink-muted);list-style:none;line-height:2;">
+            <li>■ Visualization dominates — learner sees animation before understanding the algorithm</li>
+            <li>■ Code editor squashed to 380px fixed — hard to write real code</li>
+            <li>■ No space for theory or pseudocode</li>
+            <li>■ Zero ad placement opportunities</li>
+            <li>■ No scrolling — everything crammed into viewport</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- NEW DIRECTION -->
+      <div class="problem-card">
+        <div class="problem-card-label label-new">▲ NEW DIRECTION — Learning-First</div>
+        <div class="layout-diagram">
+          <div class="ld-sidebar">
+            <div style="font-family:var(--font-pixel);font-size:5px;color:#556;margin-bottom:6px;">NAV</div>
+            <div class="ld-sidebar-item active" style="background:var(--accent-cyan);"></div>
+            <div class="ld-sidebar-item"></div>
+            <div class="ld-sidebar-item"></div>
+            <div class="ld-sidebar-item"></div>
+          </div>
+          <div class="ld-main">
+            <div class="ld-infobar">
+              <div class="ld-infobar-pill" style="width:50px;background:var(--ink);"></div>
+              <div class="ld-infobar-pill" style="width:30px;background:var(--bg-base);"></div>
+            </div>
+            <div class="ld-body">
+              <div class="ld2-content">
+                <div class="ld2-tabs">
+                  <div class="ld2-tab active">LEARN</div>
+                  <div class="ld2-tab">CODE</div>
+                  <div class="ld2-tab">PSEUDO</div>
+                </div>
+                <div class="ld2-main-area">
+                  <div class="ld2-text-block" style="width:90%;"></div>
+                  <div class="ld2-text-block" style="width:75%;"></div>
+                  <div class="ld2-pseudo-block">
+                    <div class="ld2-pseudo-line kw"></div>
+                    <div class="ld2-pseudo-line" style="margin-left:8px;width:60%;"></div>
+                    <div class="ld2-pseudo-line" style="margin-left:8px;width:45%;"></div>
+                  </div>
+                  <div class="ld2-editor">
+                    <div class="ld2-editor-line" style="background:rgba(0,212,212,0.4);border-left:2px solid var(--accent-cyan);"></div>
+                    <div class="ld2-editor-line"></div>
+                    <div class="ld2-editor-line" style="width:65%;"></div>
+                  </div>
+                </div>
+                <div class="ld2-ad-strip"><div class="ld2-ad-label">AD STRIP</div></div>
+              </div>
+              <div class="ld2-viz-panel">
+                <div class="ld2-viz-header">
+                  <div style="font-family:var(--font-pixel);font-size:5px;color:var(--accent-cyan);">VIZ ▶</div>
+                </div>
+                <div class="ld2-viz-canvas">
+                  <div class="ld2-viz-bar" style="height:55px;background:#3a4f7a;"></div>
+                  <div class="ld2-viz-bar" style="height:35px;background:var(--accent-yellow);"></div>
+                  <div class="ld2-viz-bar" style="height:70px;background:var(--accent-green);"></div>
+                  <div class="ld2-viz-bar" style="height:45px;background:#3a4f7a;"></div>
+                </div>
+                <div class="ld2-viz-ctrl">
+                  <div class="ld2-viz-btn"></div>
+                  <div class="ld2-viz-btn" style="background:var(--accent-cyan);"></div>
+                  <div class="ld2-viz-btn"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div style="padding:14px 16px;background:#f5fff8;">
+          <div style="font-family:var(--font-pixel);font-size:7px;color:#008844;margin-bottom:8px;">IMPROVEMENTS</div>
+          <ul style="font-family:var(--font-body);font-size:13px;color:var(--ink-muted);list-style:none;line-height:2;">
+            <li>▶ Learning content is front and centre — theory, pseudocode, and code editor</li>
+            <li>▶ Visualization is still accessible — collapsible right panel, always one click away</li>
+            <li>▶ Dedicated ad placements that don't disrupt the learning flow</li>
+            <li>▶ Tabs let users choose their own path through the content</li>
+            <li>▶ More breathing room for the code editor to grow</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 1 — THREE LAYOUT OPTIONS
+══════════════════════════════════════════ -->
+<div style="background:var(--bg-card); border-bottom: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-eyebrow">01 / OPTIONS CONSIDERED</div>
+    <div class="section-heading">Three layout <span>directions</span></div>
+    <div class="section-sub">Each option puts learning content first, but differs in how much the visualizer is integrated vs. separated from the main flow.</div>
+
+    <div class="options-grid">
+
+      <!-- OPTION A -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-name">OPTION A — TAB SWITCHER</div>
+          <div class="option-tagline">Learn → Pseudocode → Code → Visualize — all as full-page tabs</div>
+        </div>
+        <div class="option-diagram">
+          <div class="od-sidebar"></div>
+          <div class="od-main">
+            <div class="od-topbar"></div>
+            <div class="od-tabs">
+              <div class="od-tab a"></div>
+              <div class="od-tab"></div>
+              <div class="od-tab"></div>
+              <div class="od-tab"></div>
+            </div>
+            <div class="od-area" style="background:white; padding:8px; display:flex; flex-direction:column; gap:5px;">
+              <div style="height:8px;background:#e0e8f8;width:90%;"></div>
+              <div style="height:8px;background:#e0e8f8;width:75%;"></div>
+              <div style="height:8px;background:#e0e8f8;width:60%;"></div>
+              <div style="height:30px;background:#0f1224;border:1px solid var(--ink);margin-top:4px;"></div>
+            </div>
+            <div class="od-bottom od-ad" style="display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:var(--font-pixel);font-size:5px;color:var(--ink-muted);">AD</span>
+            </div>
+          </div>
+        </div>
+        <div class="option-body">
+          <div class="option-pros">
+            <div class="option-pros-title">▲ PROS</div>
+            <ul class="option-list">
+              <li>Simplest to build and navigate</li>
+              <li>Each tab gets full width and height</li>
+              <li>Clear separation of content types</li>
+            </ul>
+          </div>
+          <div>
+            <div class="option-cons-title">■ CONS</div>
+            <ul class="option-list cons">
+              <li>Can't see code and viz at same time</li>
+              <li>Context switching breaks learning flow</li>
+              <li>Feels like a flat wiki, not interactive</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- OPTION B — RECOMMENDED -->
+      <div class="option-card recommended">
+        <div class="option-header">
+          <div class="option-name">OPTION B — LEARNING CENTER + VIZ DRAWER ⭐</div>
+          <div class="option-tagline">Scrollable learning column with a collapsible viz panel on the right</div>
+        </div>
+        <div class="option-diagram">
+          <div class="od-sidebar"></div>
+          <div class="od-main">
+            <div class="od-topbar"></div>
+            <div class="od-tabs">
+              <div class="od-tab a"></div>
+              <div class="od-tab"></div>
+              <div class="od-tab"></div>
+            </div>
+            <div style="display:flex;flex:1;overflow:hidden;">
+              <div style="flex:1;background:white;padding:6px;display:flex;flex-direction:column;gap:4px;">
+                <div style="height:7px;background:#e0e8f8;width:85%;"></div>
+                <div style="height:7px;background:#e0e8f8;width:70%;"></div>
+                <div style="height:20px;background:#0f1224;border:1px solid var(--ink);"></div>
+                <div style="height:7px;background:#e0e8f8;width:90%;"></div>
+                <div style="height:18px;background:#1a1f3c;border:1px solid var(--ink);"></div>
+              </div>
+              <div style="width:70px;background:#e8f0ff;border-left:2px solid var(--ink);display:flex;flex-direction:column;">
+                <div style="height:14px;background:var(--ink);display:flex;align-items:center;justify-content:center;">
+                  <span style="font-family:var(--font-pixel);font-size:5px;color:var(--accent-cyan);">VIZ</span>
+                </div>
+                <div style="flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:6px 6px 4px;">
+                  <div style="width:10px;height:40px;background:#3a4f7a;border:1px solid var(--ink);"></div>
+                  <div style="width:10px;height:25px;background:var(--accent-yellow);border:1px solid var(--ink);"></div>
+                  <div style="width:10px;height:55px;background:var(--accent-green);border:1px solid var(--ink);"></div>
+                  <div style="width:10px;height:35px;background:#3a4f7a;border:1px solid var(--ink);"></div>
+                </div>
+                <div style="height:14px;background:#0f1224;border-top:1px solid var(--ink);display:flex;align-items:center;justify-content:center;gap:2px;">
+                  <div style="width:8px;height:6px;background:#2a3050;border:1px solid #445;"></div>
+                  <div style="width:8px;height:6px;background:var(--accent-cyan);border:1px solid #445;"></div>
+                  <div style="width:8px;height:6px;background:#2a3050;border:1px solid #445;"></div>
+                </div>
+              </div>
+            </div>
+            <div class="od-bottom od-ad" style="display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:var(--font-pixel);font-size:5px;color:var(--ink-muted);">AD</span>
+            </div>
+          </div>
+        </div>
+        <div class="option-body">
+          <div class="option-pros">
+            <div class="option-pros-title">▲ PROS</div>
+            <ul class="option-list">
+              <li>Learning content gets maximum space</li>
+              <li>Viz panel is always visible but not dominant</li>
+              <li>Tabs allow Learn / Pseudocode / Code views</li>
+              <li>Collapsible panel frees full width when needed</li>
+              <li>Natural ad placements between content sections</li>
+              <li>Feels like a proper IDE + textbook hybrid</li>
+            </ul>
+          </div>
+          <div>
+            <div class="option-cons-title">■ CONS</div>
+            <ul class="option-list cons">
+              <li>Needs careful responsive handling for narrow screens</li>
+            </ul>
+          </div>
+          <div class="rec-badge">◆ RECOMMENDED</div>
+        </div>
+      </div>
+
+      <!-- OPTION C -->
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-name">OPTION C — SPLIT SCREEN</div>
+          <div class="option-tagline">Fixed 50/50 split: learning on left, visualization on right, always both visible</div>
+        </div>
+        <div class="option-diagram">
+          <div class="od-sidebar"></div>
+          <div class="od-main">
+            <div class="od-topbar"></div>
+            <div style="display:flex;flex:1;">
+              <div style="flex:1;background:white;padding:6px;display:flex;flex-direction:column;gap:4px;border-right:2px solid var(--ink);">
+                <div style="height:7px;background:#e0e8f8;width:85%;"></div>
+                <div style="height:20px;background:#0f1224;border:1px solid var(--ink);"></div>
+                <div style="height:7px;background:#e0e8f8;width:70%;"></div>
+              </div>
+              <div style="flex:1;background:#e8f0ff;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:6px;">
+                <div style="width:12px;height:50px;background:#3a4f7a;border:1px solid var(--ink);"></div>
+                <div style="width:12px;height:35px;background:var(--accent-yellow);border:1px solid var(--ink);"></div>
+                <div style="width:12px;height:65px;background:var(--accent-coral);border:1px solid var(--ink);"></div>
+                <div style="width:12px;height:45px;background:#3a4f7a;border:1px solid var(--ink);"></div>
+                <div style="width:12px;height:28px;background:var(--accent-green);border:1px solid var(--ink);"></div>
+              </div>
+            </div>
+            <div class="od-bottom od-ad" style="display:flex;align-items:center;justify-content:center;">
+              <span style="font-family:var(--font-pixel);font-size:5px;color:var(--ink-muted);">AD</span>
+            </div>
+          </div>
+        </div>
+        <div class="option-body">
+          <div class="option-pros">
+            <div class="option-pros-title">▲ PROS</div>
+            <ul class="option-list">
+              <li>Always see code and animation together</li>
+              <li>Great for advanced users who know the theory</li>
+            </ul>
+          </div>
+          <div>
+            <div class="option-cons-title">■ CONS</div>
+            <ul class="option-list cons">
+              <li>Each panel too narrow for comfortable reading</li>
+              <li>Can't expand either side fully</li>
+              <li>Poor on screens below 1400px</li>
+              <li>No room for theory/pseudocode content</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 2 — RECOMMENDED LAYOUT DEEP DIVE
+══════════════════════════════════════════ -->
+<div style="border-bottom: 4px solid var(--ink);">
+  <div class="section">
+    <div class="section-eyebrow">02 / RECOMMENDED LAYOUT</div>
+    <div class="section-heading">Option B — Full <span>Wireframe</span></div>
+    <div class="section-sub">The Learning Center + Viz Drawer layout. A scrollable content column with tabs for Learn / Pseudocode / Code, a collapsible visualization panel on the right, and clearly defined ad zones that don't interrupt reading flow.</div>
+
+    <div style="display:grid;grid-template-columns:1fr 340px;gap:40px;align-items:start;">
+
+      <!-- WIREFRAME: EXPANDED STATE -->
+      <div>
+        <div style="font-family:var(--font-pixel);font-size:8px;color:var(--ink-muted);margin-bottom:10px;letter-spacing:0.1em;">▶ VIZ PANEL EXPANDED (default)</div>
+        <div class="wireframe">
+          <div class="wf-nav">
+            <div class="wf-nav-logo">DSA<span>QUEST</span></div>
+            <div class="wf-nav-spacer"></div>
+            <div style="font-family:var(--font-pixel);font-size:6px;color:var(--ink-muted);">HOME · ALGORITHMS · ABOUT</div>
+          </div>
+          <div class="wf-ad-top">
+            <div class="wf-ad-label">◈ LEADERBOARD AD — 728×90 — top of every page</div>
+          </div>
+          <div class="wf-body">
+            <!-- Sidebar -->
+            <div class="wf-sidebar">
+              <div class="wf-sidebar-cat">◈ SORTING</div>
+              <div class="wf-sidebar-item active"><div class="wf-sidebar-dot"></div>Bubble Sort</div>
+              <div class="wf-sidebar-item"><div class="wf-sidebar-dot"></div>Quick Sort</div>
+              <div class="wf-sidebar-item"><div class="wf-sidebar-dot"></div>Merge Sort</div>
+              <div class="wf-sidebar-cat">◈ SEARCHING</div>
+              <div class="wf-sidebar-item"><div class="wf-sidebar-dot"></div>Binary Search</div>
+              <div class="wf-sidebar-cat">◈ STRUCTURES</div>
+              <div class="wf-sidebar-item"><div class="wf-sidebar-dot"></div>Stack</div>
+              <div class="wf-sidebar-item"><div class="wf-sidebar-dot"></div>Queue</div>
+              <div class="wf-sidebar-cat">◈ TREES</div>
+              <div class="wf-sidebar-item"><div class="wf-sidebar-dot"></div>BST</div>
+              <div class="wf-sidebar-ad">
+                <div style="font-family:var(--font-pixel);font-size:5px;color:#445566;text-align:center;line-height:1.8;">AD RECT<br>300×250</div>
+              </div>
+            </div>
+            <!-- Center content -->
+            <div class="wf-center">
+              <div class="wf-infobar">
+                <div class="wf-algo-name">BUBBLE SORT</div>
+                <div class="wf-pill">O(n²)</div>
+                <div class="wf-pill">O(1)</div>
+                <div style="margin-left:auto;font-family:var(--font-pixel);font-size:6px;padding:3px 7px;background:var(--accent-green);border:1px solid var(--ink);box-shadow:1px 1px 0 var(--ink);">▲ EASY</div>
+              </div>
+              <div class="wf-tabs">
+                <div class="wf-tab active">◈ LEARN</div>
+                <div class="wf-tab">{ } PSEUDOCODE</div>
+                <div class="wf-tab">⌨ CODE EDITOR</div>
+              </div>
+              <div class="wf-tab-content">
+                <div class="wf-learn-area">
+                  <div style="font-family:var(--font-pixel);font-size:7px;margin-bottom:4px;">WHAT IS BUBBLE SORT?</div>
+                  <div class="wf-text-line" style="width:95%;"></div>
+                  <div class="wf-text-line" style="width:85%;"></div>
+                  <div class="wf-text-line short"></div>
+                  <div style="font-family:var(--font-pixel);font-size:7px;margin:8px 0 4px;">COMPLEXITY ANALYSIS</div>
+                  <div style="display:flex;gap:8px;">
+                    <div style="flex:1;background:var(--bg-card);border:1px solid var(--ink);padding:6px;">
+                      <div style="font-family:var(--font-pixel);font-size:6px;color:var(--ink-muted);margin-bottom:4px;">TIME</div>
+                      <div style="font-family:var(--font-pixel);font-size:8px;">O(n²)</div>
+                    </div>
+                    <div style="flex:1;background:var(--bg-card);border:1px solid var(--ink);padding:6px;">
+                      <div style="font-family:var(--font-pixel);font-size:6px;color:var(--ink-muted);margin-bottom:4px;">SPACE</div>
+                      <div style="font-family:var(--font-pixel);font-size:8px;">O(1)</div>
+                    </div>
+                    <div style="flex:1;background:var(--bg-card);border:1px solid var(--ink);padding:6px;">
+                      <div style="font-family:var(--font-pixel);font-size:6px;color:var(--ink-muted);margin-bottom:4px;">STABLE</div>
+                      <div style="font-family:var(--font-pixel);font-size:8px;color:var(--accent-green);">YES</div>
+                    </div>
+                  </div>
+                  <div class="wf-pseudo-block">
+                    <div class="wf-pseudo-header">{ } PSEUDOCODE PREVIEW</div>
+                    <div class="wf-pseudo-line kw"></div>
+                    <div class="wf-pseudo-line indent"></div>
+                    <div class="wf-pseudo-line indent" style="width:40%;"></div>
+                    <div class="wf-pseudo-line" style="margin-left:20px;width:50%;"></div>
+                  </div>
+                  <div class="wf-code-block">
+                    <div class="wf-code-header"><span>⌨ CODE EDITOR PREVIEW</span><span style="color:var(--accent-green);">Python</span></div>
+                    <div class="wf-code-line"></div>
+                    <div class="wf-code-line active"></div>
+                    <div class="wf-code-line" style="width:70%;"></div>
+                    <div class="wf-run-btn">▶ RUN</div>
+                  </div>
+                </div>
+              </div>
+              <div class="wf-ad-strip">
+                <div class="wf-ad-label">◈ IN-CONTENT AD BANNER — 728×90 — between learn content and footer</div>
+              </div>
+            </div>
+            <!-- Viz panel -->
+            <div class="wf-viz">
+              <div class="wf-viz-header">
+                <div class="wf-viz-title">◆ VISUALIZER</div>
+                <div class="wf-viz-toggle">◀ COLLAPSE</div>
+              </div>
+              <div class="wf-viz-canvas">
+                <div class="wf-viz-bar" style="height:70px;background:#3a4f7a;"></div>
+                <div class="wf-viz-bar" style="height:45px;background:var(--accent-yellow);"></div>
+                <div class="wf-viz-bar" style="height:95px;background:var(--accent-green);"></div>
+                <div class="wf-viz-bar" style="height:55px;background:var(--accent-coral);"></div>
+                <div class="wf-viz-bar" style="height:80px;background:#3a4f7a;"></div>
+              </div>
+              <div class="wf-viz-step">Comparing index 2 and 3</div>
+              <div style="padding:6px 10px;">
+                <div style="height:8px;background:#2a3050;border:1px solid var(--ink);margin-bottom:4px;">
+                  <div style="height:100%;width:40%;background:var(--accent-cyan);"></div>
+                </div>
+                <div style="font-family:var(--font-pixel);font-size:5px;color:#8899cc;">STEP 5 / 12</div>
+              </div>
+              <div class="wf-viz-controls">
+                <div class="wf-ctrl"></div>
+                <div class="wf-ctrl"></div>
+                <div class="wf-ctrl active"></div>
+                <div class="wf-ctrl"></div>
+                <div class="wf-ctrl"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WIREFRAME: COLLAPSED STATE + NOTES -->
+      <div style="display:flex;flex-direction:column;gap:24px;">
+        <div>
+          <div style="font-family:var(--font-pixel);font-size:8px;color:var(--ink-muted);margin-bottom:10px;letter-spacing:0.1em;">▶ VIZ PANEL COLLAPSED</div>
+          <div class="wireframe" style="height:200px;">
+            <div class="wf-nav" style="height:36px;">
+              <div class="wf-nav-logo" style="font-size:8px;">DSA<span>QUEST</span></div>
+            </div>
+            <div style="display:flex;height:164px;">
+              <div style="width:60px;background:#1a1f3c;border-right:2px solid var(--ink);padding:6px 0;display:flex;flex-direction:column;gap:3px;">
+                <div style="height:6px;background:#2a3050;margin:0 6px;"></div>
+                <div style="height:6px;background:var(--accent-cyan);margin:0 6px;"></div>
+                <div style="height:6px;background:#2a3050;margin:0 6px;"></div>
+              </div>
+              <div style="flex:1;background:white;padding:10px;display:flex;flex-direction:column;gap:6px;">
+                <div style="height:7px;background:#e0e8f8;width:90%;"></div>
+                <div style="height:7px;background:#e0e8f8;width:75%;"></div>
+                <div style="height:30px;background:#0f1224;border:1px solid var(--ink);"></div>
+                <div style="height:7px;background:#e0e8f8;width:60%;"></div>
+              </div>
+              <div class="wf-viz-collapsed">
+                <div class="wf-viz-collapsed-btn">▶</div>
+                <div class="wf-viz-collapsed-label">VISUALIZE</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Key decisions -->
+        <div class="px-card">
+          <div class="px-card-header">◆ KEY DESIGN DECISIONS</div>
+          <div class="px-card-body" style="display:flex;flex-direction:column;gap:16px;">
+            <div>
+              <div style="font-family:var(--font-pixel);font-size:8px;margin-bottom:6px;">VIZ PANEL DEFAULTS</div>
+              <div style="font-family:var(--font-body);font-size:13px;color:var(--ink-muted);line-height:1.9;">
+                Expanded by default on first load, so new users see the animation. Collapsed state remembered per-user via localStorage for return visits.
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-pixel);font-size:8px;margin-bottom:6px;">VIZ PANEL WIDTH</div>
+              <div style="font-family:var(--font-body);font-size:13px;color:var(--ink-muted);line-height:1.9;">
+                320px expanded (enough for bars + tree), 40px collapsed (just a toggle strip). Resizable via drag handle in future.
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-pixel);font-size:8px;margin-bottom:6px;">PSEUDOCODE SYNC</div>
+              <div style="font-family:var(--font-body);font-size:13px;color:var(--ink-muted);line-height:1.9;">
+                When the viz panel steps forward, the active pseudocode line highlights in sync — the two panels talk to each other via shared frame state in Zustand.
+              </div>
+            </div>
+            <div>
+              <div style="font-family:var(--font-pixel);font-size:8px;margin-bottom:6px;">KEYBOARD SHORTCUT</div>
+              <div style="font-family:var(--font-body);font-size:13px;color:var(--ink-muted);line-height:1.9;">
+                <span style="font-family:var(--font-code);background:var(--bg-card);padding:1px 5px;border:1px solid var(--ink);">V</span> toggles the visualizer panel.
+                <span style="font-family:var(--font-code);background:var(--bg-card);padding:1px 5px;border:1px solid var(--ink);">Space</span> still plays/pauses.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 3 — TAB CONTENT BREAKDOWN
+══════════════════════════════════════════ -->
+<div style="background:var(--bg-card);border-bottom:4px solid var(--ink);">
+  <div class="section">
+    <div class="section-eyebrow">03 / CONTENT TABS</div>
+    <div class="section-heading">What lives in each <span>tab</span></div>
+    <div class="section-sub">The three-tab layout lets users enter the content at the depth they need. A beginner starts with LEARN, a student revising starts with PSEUDOCODE, a coder starts at CODE EDITOR.</div>
+
+    <div class="tabs-breakdown">
+      <div class="tab-card">
+        <div class="tab-card-header tab-h-learn">◈ TAB 1 — LEARN</div>
+        <div class="tab-card-body">
+          <ul>
+            <li>Algorithm name + one-line definition</li>
+            <li>Plain-English step-by-step explanation</li>
+            <li>Time & space complexity cards with Big-O notation</li>
+            <li>Best / average / worst case breakdown</li>
+            <li>When to use this algorithm (use cases)</li>
+            <li>Comparison with similar algorithms</li>
+            <li>Real-world examples (e.g., "used in Python's sort()")</li>
+            <li>Inline pseudocode snippet preview</li>
+            <li>▶ "Try it in the visualizer" CTA button</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tab-card">
+        <div class="tab-card-header tab-h-pseudo">{ } TAB 2 — PSEUDOCODE</div>
+        <div class="tab-card-body">
+          <ul>
+            <li>Full pseudocode in a readable step format</li>
+            <li>Line-by-line highlighting synced with viz panel</li>
+            <li>Collapsible sub-steps for complex algorithms</li>
+            <li>Annotation notes on hover (explains the why)</li>
+            <li>Toggle between pseudocode and flowchart view</li>
+            <li>Step counter tied to viz playback position</li>
+            <li>Copy pseudocode to clipboard button</li>
+          </ul>
+        </div>
+      </div>
+      <div class="tab-card">
+        <div class="tab-card-header tab-h-code">⌨ TAB 3 — CODE EDITOR</div>
+        <div class="tab-card-body">
+          <ul>
+            <li>Full Monaco editor (expanded, no cramped 380px)</li>
+            <li>Starter code pre-loaded for each algorithm</li>
+            <li>Run button — executes on backend, returns frames</li>
+            <li>Active line synced to viz panel when running</li>
+            <li>Output console for stdout / stderr / exec time</li>
+            <li>Language selector (Python default, JS/Java future)</li>
+            <li>Reset to starter code button</li>
+            <li>Custom input array field</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 4 — AD PLACEMENT STRATEGY
+══════════════════════════════════════════ -->
+<div style="border-bottom:4px solid var(--ink);">
+  <div class="section">
+    <div class="section-eyebrow">04 / AD STRATEGY</div>
+    <div class="section-heading">Ad placements that <span>don't break flow</span></div>
+    <div class="section-sub">Four dedicated ad zones, each placed at natural visual breaks so they feel integrated rather than intrusive. No mid-content interruptions. No pop-overs. All standard IAB sizes for easy Google AdSense / programmatic integration.</div>
+
+    <div class="ad-map-grid">
+      <div class="ad-slot-card">
+        <div class="ad-slot-header">SLOT A — TOP LEADERBOARD</div>
+        <div class="ad-slot-body">
+          <div class="ad-slot-name">Top Banner</div>
+          <div class="ad-slot-size">728×90 · Leaderboard</div>
+          <div class="ad-slot-desc">Sits between the navbar and the algorithm info bar. High visibility, seen on every page load. Standard leaderboard — best CPM. Does not scroll with the page.</div>
+          <div class="ad-slot-preview" style="height:44px;">
+            <div class="ad-slot-preview-label">LEADERBOARD — 728×90</div>
+          </div>
+        </div>
+      </div>
+      <div class="ad-slot-card">
+        <div class="ad-slot-header">SLOT B — SIDEBAR RECTANGLE</div>
+        <div class="ad-slot-body">
+          <div class="ad-slot-name">Sidebar Medium Rectangle</div>
+          <div class="ad-slot-size">300×250 · Medium Rectangle</div>
+          <div class="ad-slot-desc">Placed at the bottom of the left sidebar algorithm list. Sticky within the sidebar — stays visible while user scrolls content. 300×250 is the highest-fill IAB format globally.</div>
+          <div class="ad-slot-preview" style="height:80px;width:150px;">
+            <div class="ad-slot-preview-label">MREC — 300×250</div>
+          </div>
+        </div>
+      </div>
+      <div class="ad-slot-card">
+        <div class="ad-slot-header">SLOT C — IN-CONTENT STRIP</div>
+        <div class="ad-slot-body">
+          <div class="ad-slot-name">In-Content Banner</div>
+          <div class="ad-slot-size">728×90 · Leaderboard</div>
+          <div class="ad-slot-desc">Appears between the last content section and the page footer in the main learning column. Natural reading pause — highest viewability score for in-content placements. Not shown mid-paragraph.</div>
+          <div class="ad-slot-preview" style="height:44px;">
+            <div class="ad-slot-preview-label">IN-CONTENT BANNER — 728×90</div>
+          </div>
+        </div>
+      </div>
+      <div class="ad-slot-card">
+        <div class="ad-slot-header">SLOT D — COLLAPSED VIZ PANEL</div>
+        <div class="ad-slot-body">
+          <div class="ad-slot-name">Viz-Collapsed Rectangle</div>
+          <div class="ad-slot-size">160×600 · Wide Skyscraper</div>
+          <div class="ad-slot-desc">When the visualizer panel is collapsed, the freed right-column space (320px) can optionally show a wide skyscraper or half-page ad. Only shown when user has collapsed the panel — not forced. Premium placement.</div>
+          <div class="ad-slot-preview" style="height:120px;width:80px;">
+            <div class="ad-slot-preview-label" style="writing-mode:vertical-rl;">SKYSCRAPER 160×600</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 5 — VIZ PANEL STATES
+══════════════════════════════════════════ -->
+<div style="background:var(--bg-card);border-bottom:4px solid var(--ink);">
+  <div class="section">
+    <div class="section-eyebrow">05 / VIZ PANEL BEHAVIOUR</div>
+    <div class="section-heading">Three states of the <span>visualization panel</span></div>
+    <div class="section-sub">The panel has three distinct modes — collapsed strip, expanded visualizer, and fullscreen overlay. Each is reachable with one click or keypress.</div>
+
+    <div class="viz-states-grid">
+      <!-- COLLAPSED -->
+      <div class="viz-state-card">
+        <div class="viz-state-header">STATE 1 — COLLAPSED STRIP</div>
+        <div class="viz-state-diagram">
+          <div style="flex:1;background:white;padding:10px;display:flex;flex-direction:column;gap:5px;">
+            <div style="height:7px;background:#e0e8f8;width:90%;"></div>
+            <div style="height:7px;background:#e0e8f8;width:75%;"></div>
+            <div style="height:25px;background:#0f1224;border:1px solid var(--ink);"></div>
+            <div style="height:7px;background:#e0e8f8;width:60%;"></div>
+          </div>
+          <div style="width:36px;background:#1a1f3c;border-left:2px solid var(--ink);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;">
+            <div style="width:22px;height:22px;background:var(--accent-cyan);border:1px solid var(--ink);box-shadow:2px 2px 0 var(--ink);display:flex;align-items:center;justify-content:center;font-size:12px;">▶</div>
+            <div style="font-family:var(--font-pixel);font-size:5px;color:var(--accent-cyan);writing-mode:vertical-rl;letter-spacing:0.2em;">VISUALIZE</div>
+          </div>
+        </div>
+        <div class="viz-state-body">
+          <div class="viz-state-desc">40px strip on the right edge. Shows a ▶ VISUALIZE button and label. Content column takes full remaining width. Ad slot D can appear here. Triggered by: clicking ◀ collapse, pressing <span style="font-family:var(--font-code);background:var(--bg-card);padding:1px 5px;border:1px solid var(--ink);">V</span>.</div>
+        </div>
+      </div>
+      <!-- EXPANDED -->
+      <div class="viz-state-card">
+        <div class="viz-state-header">STATE 2 — EXPANDED (320px)</div>
+        <div class="viz-state-diagram">
+          <div style="flex:1;background:white;padding:8px;display:flex;flex-direction:column;gap:4px;">
+            <div style="height:6px;background:#e0e8f8;width:85%;"></div>
+            <div style="height:20px;background:#0f1224;border:1px solid var(--ink);"></div>
+          </div>
+          <div style="width:90px;background:#e8f0ff;border-left:2px solid var(--ink);display:flex;flex-direction:column;">
+            <div style="height:18px;background:var(--ink);display:flex;align-items:center;padding:0 6px;gap:4px;">
+              <div style="font-family:var(--font-pixel);font-size:5px;color:var(--accent-cyan);flex:1;">VIZ</div>
+              <div style="font-size:9px;color:white;">◀</div>
+            </div>
+            <div style="flex:1;display:flex;align-items:flex-end;justify-content:center;gap:3px;padding:6px 6px 4px;">
+              <div style="width:10px;height:45px;background:#3a4f7a;border:1px solid var(--ink);"></div>
+              <div style="width:10px;height:28px;background:var(--accent-yellow);border:1px solid var(--ink);"></div>
+              <div style="width:10px;height:60px;background:var(--accent-green);border:1px solid var(--ink);"></div>
+              <div style="width:10px;height:38px;background:var(--accent-coral);border:1px solid var(--ink);"></div>
+            </div>
+            <div style="padding:4px 6px;background:#1e2440;border-top:1px solid var(--ink);">
+              <div style="height:5px;background:#2a3050;margin-bottom:3px;"><div style="height:100%;width:40%;background:var(--accent-cyan);"></div></div>
+              <div style="height:3px;background:#2a3050;width:60%;"></div>
+            </div>
+            <div style="height:14px;background:#0f1224;border-top:1px solid var(--ink);display:flex;align-items:center;justify-content:center;gap:2px;">
+              <div style="width:8px;height:6px;background:#2a3050;border:1px solid #445;"></div>
+              <div style="width:8px;height:6px;background:var(--accent-cyan);border:1px solid #445;"></div>
+              <div style="width:8px;height:6px;background:#2a3050;border:1px solid #445;"></div>
+            </div>
+          </div>
+        </div>
+        <div class="viz-state-body">
+          <div class="viz-state-desc">Default state. 320px right panel showing animation canvas, step description, progress bar, and playback controls. Resizable to 480px via drag handle in future iteration.</div>
+        </div>
+      </div>
+      <!-- FULLSCREEN -->
+      <div class="viz-state-card">
+        <div class="viz-state-header">STATE 3 — FULLSCREEN OVERLAY</div>
+        <div class="viz-state-diagram" style="background:#e8f0ff;position:relative;">
+          <div style="position:absolute;inset:0;background:#e8f0ff;display:flex;flex-direction:column;">
+            <div style="height:22px;background:var(--ink);display:flex;align-items:center;padding:0 10px;gap:6px;">
+              <div style="font-family:var(--font-pixel);font-size:6px;color:var(--accent-cyan);flex:1;">◆ FULLSCREEN VISUALIZER — BUBBLE SORT</div>
+              <div style="font-family:var(--font-pixel);font-size:6px;color:white;padding:2px 5px;border:1px solid #445;background:#2a3050;">✕ EXIT</div>
+            </div>
+            <div style="flex:1;display:flex;align-items:flex-end;justify-content:center;gap:6px;padding:16px 16px 10px;">
+              <div style="width:24px;height:60px;background:#3a4f7a;border:2px solid var(--ink);"></div>
+              <div style="width:24px;height:35px;background:var(--accent-yellow);border:2px solid var(--ink);"></div>
+              <div style="width:24px;height:85px;background:var(--accent-green);border:2px solid var(--ink);"></div>
+              <div style="width:24px;height:50px;background:var(--accent-coral);border:2px solid var(--ink);"></div>
+              <div style="width:24px;height:70px;background:#3a4f7a;border:2px solid var(--ink);"></div>
+              <div style="width:24px;height:45px;background:#3a4f7a;border:2px solid var(--ink);"></div>
+            </div>
+            <div style="height:18px;background:#0f1224;border-top:2px solid var(--ink);display:flex;align-items:center;padding:0 10px;gap:4px;">
+              <div style="width:12px;height:8px;background:#2a3050;border:1px solid #445;"></div>
+              <div style="width:12px;height:8px;background:#2a3050;border:1px solid #445;"></div>
+              <div style="width:12px;height:8px;background:var(--accent-cyan);border:1px solid #445;"></div>
+              <div style="width:12px;height:8px;background:#2a3050;border:1px solid #445;"></div>
+              <div style="flex:1;height:6px;background:#2a3050;"><div style="height:100%;width:40%;background:var(--accent-cyan);"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="viz-state-body">
+          <div class="viz-state-desc">Press <span style="font-family:var(--font-code);background:var(--bg-card);padding:1px 5px;border:1px solid var(--ink);">F</span> or click the expand icon to go fullscreen. The visualizer takes over the entire content area. ESC or ✕ returns to expanded state. Best for demos and presentations.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SECTION 6 — IMPLEMENTATION PHASES
+══════════════════════════════════════════ -->
+<div style="border-bottom:4px solid var(--ink);">
+  <div class="section">
+    <div class="section-eyebrow">06 / IMPLEMENTATION PLAN</div>
+    <div class="section-heading">Build it in <span>3 phases</span></div>
+    <div class="section-sub">Each phase is independently shippable and doesn't break the existing experience. Phase 1 alone gives you the new layout. Phases 2 and 3 build on top.</div>
+
+    <div class="phases-list">
+      <div class="phase">
+        <div class="phase-num">PHASE<br>01</div>
+        <div class="phase-body">
+          <div class="phase-title">LAYOUT RESTRUCTURE</div>
+          <div class="phase-desc">Rebuild the VisualizerPage layout. Move Monaco editor to the center column. Make the visualization panel collapsible with a toggle button and keyboard shortcut. Add the three-tab structure (Learn / Pseudocode / Code Editor) to the center column. Wire up the Zustand store for panel open/closed state with localStorage persistence.</div>
+          <div class="phase-tasks">
+            <span class="tag tag-cyan">VisualizerPage.tsx</span>
+            <span class="tag tag-cyan">Zustand store</span>
+            <span class="tag tag-yellow">CSS layout overhaul</span>
+            <span class="tag tag-yellow">Collapsible panel</span>
+            <span class="tag tag-green">~2–3 days</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">PHASE<br>02</div>
+        <div class="phase-body">
+          <div class="phase-title">CONTENT SYSTEM</div>
+          <div class="phase-desc">Populate the Learn and Pseudocode tabs with real content. Extend the algorithmRegistry.ts to include description text, use-case notes, and pseudocode arrays per algorithm. Build the pseudocode viewer component with line-highlighting synced to the current viz frame. Revive the pseudocode panel that currently exists as a component but isn't rendered.</div>
+          <div class="phase-tasks">
+            <span class="tag tag-cyan">algorithmRegistry.ts</span>
+            <span class="tag tag-cyan">PseudocodePanel.tsx</span>
+            <span class="tag tag-yellow">LearnTab.tsx</span>
+            <span class="tag tag-yellow">Content for 12 algorithms</span>
+            <span class="tag tag-green">~3–4 days</span>
+          </div>
+        </div>
+      </div>
+      <div class="phase">
+        <div class="phase-num">PHASE<br>03</div>
+        <div class="phase-body">
+          <div class="phase-title">AD INTEGRATION + POLISH</div>
+          <div class="phase-desc">Add the four ad slot placeholder components (AdSlot.tsx) with defined IAB dimensions. Integrate Google AdSense or placeholder divs with correct data attributes so they're ready for programmatic fill. Add fullscreen mode to the viz panel. Add drag-to-resize handle on the viz panel border. Responsive breakpoints for &lt;1200px.</div>
+          <div class="phase-tasks">
+            <span class="tag tag-cyan">AdSlot.tsx</span>
+            <span class="tag tag-yellow">Google AdSense setup</span>
+            <span class="tag tag-yellow">Fullscreen mode</span>
+            <span class="tag tag-purple">Drag-to-resize panel</span>
+            <span class="tag tag-green">~2–3 days</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="concept-footer">
+  <div class="concept-footer-title">◆ DSAQUEST — LAYOUT PLAN v1.0 ◆</div>
+  <div class="concept-footer-sub">Learning-First · Collapsible Viz · 4 Ad Zones · 3 Implementation Phases</div>
+</div>
+
+</body>
+</html>

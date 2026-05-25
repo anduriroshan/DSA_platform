@@ -1,0 +1,4 @@
+- [Platform snapshot (2026-05-24)](platform_snapshot_2026_05.md) — algorithms implemented, visualizers available, categories registered
+- [Backend seed location](backend_seed_location.md) — where DB seed data lives and how seeding runs
+- [Sidebar categories](sidebar_categories.md) — Sidebar CATEGORY_META now covers 6 categories incl. graphs and dynamic-programming
+- [New frame conventions](new_frame_conventions.md) — heap, graph, dp-table, doubly-linked frame contract details verified in Tier 3
