@@ -15,24 +15,26 @@
 
 /* ── Design Tokens ─────────────────────────────────────────────── */
 :root {
-  /* Backgrounds */
-  --bg-base:       #edf1f8;
-  --bg-card:       #ffffff;
-  --bg-elevated:   #f6f8fc;
-  --bg-dark:       #1a1f3c;
-  --bg-darker:     #0f1224;
-  --bg-darkest:    #08091c;
+  /* Backgrounds — Golden Parchment day world */
+  --bg-base:       #f8f2df;
+  --bg-card:       #fffdf5;
+  --bg-elevated:   #ede4c4;
+  /* Console-chrome dark surfaces (sidebar, pseudocode panel, viz-panel header).
+     Day = dark mahogany/oak wood; Night = deep indigo — see dark override below. */
+  --bg-dark:       #1a0e00;
+  --bg-darker:     #110900;
+  --bg-darkest:    #080400;
 
   /* Brand/identity accent — THE color that differs per theme. Night =
      the platform's original neon cyan; Day = a sunlit terracotta, tuned
      for AA text contrast on white (see agent-memory contrast notes). Used
      for chrome (buttons, nav, links, CTAs) — never for data-viz frame
      states, so retinting it can't confuse array/tree/graph/etc. legends. */
-  --accent-primary:     #a84e00;
-  --accent-primary-dim: #7a3600;
+  --accent-primary:     #9c5400;
+  --accent-primary-dim: #8a4800;
   /* Text placed ON a --accent-primary fill (buttons, active badges).
      Night's primary is bright (needs dark text); Day's is mid-toned
-     terracotta (needs light text) — one flip keeps every button readable. */
+     amber (needs light text) — one flip keeps every button readable. */
   --text-on-primary: #ffffff;
 
   /* Data-viz accent vocabulary — fixed hue across both themes on purpose.
@@ -51,8 +53,9 @@
   --hard:   #ff6b6b;
 
   /* Bar states (also reused as the theme-safe "idle/default" stroke for
-     Tree/Heap/Graph nodes — see those components) */
-  --bar-default: #3a4f7a;
+     Tree/Heap/Graph nodes — see those components). Steel blue is a
+     deliberate cool counterpoint against the warm parchment canvas. */
+  --bar-default: #5878a0;
   --bar-compare: #f5c800;
   --bar-swap:    #ff6b6b;
   --bar-sorted:  #00e676;
@@ -68,19 +71,19 @@
   --status-bad:  #b03030;
   --status-info: #7a35c2;
 
-  /* Ink (borders, shadows) */
-  --ink:           #1e2445;
-  --ink-muted:     #5c6490;
-  --ink-light:     #8896b5;
+  /* Ink (borders, shadows) — warm dark, matches the parchment/wood world */
+  --ink:           #2e2000;
+  --ink-muted:     #7a5e20;
+  --ink-light:     #a88c50;
 
   /* Text (separates from --ink so dark mode can invert) */
-  --text:          #1a1f3c;
-  --text-on-accent: #1a1f3c;
+  --text:          #2e2000;
+  --text-on-accent: #2e2000;
 
-  /* Text on dark */
-  --text-light:    #e8eeff;
-  --text-light-muted: #8899cc;
-  --text-light-dim: #556699;
+  /* Text on dark (sidebar, panels — see --bg-dark family above) */
+  --text-light:    #f0e8d0;
+  --text-light-muted: #c8a870;
+  --text-light-dim: #8a6840;
 
   /* Pixel shadows (hard, no blur) */
   --shadow-px:     4px 4px 0 var(--ink);
@@ -93,8 +96,14 @@
      a soft sun-glow wash for day. Applied to .navbar / .hero-section as a
      background-image layer; see the DAY/NIGHT MOTIF section below. */
   --world-motif:
-    radial-gradient(120px 90px at 90% -25%, rgba(168, 78, 0, 0.14), transparent 70%),
-    radial-gradient(160px 120px at -10% 120%, rgba(168, 78, 0, 0.07), transparent 70%);
+    radial-gradient(120px 90px at 90% -25%, rgba(184, 96, 0, 0.22), transparent 70%),
+    radial-gradient(160px 120px at -10% 120%, rgba(184, 96, 0, 0.10), transparent 70%);
+
+  /* Day-only leaf glyphs (see .leaf-deco below) — muted sage/gold, not the
+     punchy data-viz green/yellow, so they read as ambient decor rather
+     than a compare/sorted state bleeding into the background. */
+  --leaf-green: #7a9c52;
+  --leaf-gold:  #c9a428;
 
   /* Fonts */
   --font-pixel: 'Press Start 2P', monospace;
@@ -124,6 +133,12 @@
      though both were historically "the cyan." */
   --accent-cyan:    #00d4d4;
   --accent-cyan-dim: #00a8a8;
+
+  /* Recessed/inset surface WITHIN the dark console chrome (sidebar divider,
+     playback-control button/track backgrounds) — needs its own theme swap
+     so it reads as warm-on-mahogany by day and cool-on-indigo by night,
+     rather than a navy chip stranded on a brown panel. */
+  --chrome-inset: #4a3818;
 
   /* Legacy aliases — used by D3 visualizers that haven't been refactored yet */
   --accent-amber:   var(--accent-yellow);
@@ -166,6 +181,16 @@
 
   /* Bar default needs to be visible against the now-dark canvas */
   --bar-default:   #5a6da0;
+
+  /* Text on dark (sidebar/panels) — restore the original icy-blue tones here.
+     :root now warms these for day mode's mahogany panels; night's panels are
+     still indigo, so night keeps its own matching tint (no regression). */
+  --text-light:    #e8eeff;
+  --text-light-muted: #8899cc;
+  --text-light-dim: #556699;
+
+  /* Restore the original navy inset for night's indigo chrome (see :root). */
+  --chrome-inset: #2a3050;
 
   /* Night motif: hard-edged scattered stars + a faint cyan moon-glow */
   --world-motif:
@@ -284,7 +309,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 14px;
 }
 
-.navbar-center { flex: 1; }
+.navbar-center { flex: 1; position: relative; }
 
 .navbar-actions { display: flex; gap: 10px; align-items: center; }
 
@@ -294,6 +319,26 @@ input, textarea, select { font-family: inherit; }
 @keyframes motifTwinkle {
   0%, 100% { opacity: 1; }
   50%      { opacity: 0.45; }
+}
+
+/* ── Leaf motif — light-mode-only ambient decor, the day counterpart to
+   the night starfield above. Hero instances ride .hero-deco's existing
+   float rhythm via its unused d5/d6 slots; navbar gets its own smaller-
+   amplitude bob since it's only 56px tall. */
+.leaf-deco { color: var(--leaf-green); }
+.leaf-deco.gold { color: var(--leaf-gold); }
+
+.navbar-deco {
+  position: absolute;
+  font-size: 15px;
+  opacity: 0.55;
+  user-select: none;
+  pointer-events: none;
+  animation: leafBob 3s ease-in-out infinite;
+}
+@keyframes leafBob {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-4px) rotate(10deg); }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -374,7 +419,7 @@ input, textarea, select { font-family: inherit; }
 
 .sidebar-search {
   padding: 12px 12px 8px;
-  border-bottom: 2px solid #2a3050;
+  border-bottom: 2px solid var(--chrome-inset);
   position: relative;
   flex-shrink: 0;
 }
@@ -955,7 +1000,7 @@ input, textarea, select { font-family: inherit; }
   background-size: 4px 4px, 4px 4px;
   background-repeat: no-repeat;
   color: var(--accent-cyan);
-  border: 2px solid #2a3050;
+  border: 2px solid var(--chrome-inset);
   box-shadow: 2px 2px 0 var(--ink);
   letter-spacing: 0.08em;
   cursor: pointer;
@@ -1072,7 +1117,7 @@ input, textarea, select { font-family: inherit; }
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #2a3050;
+  background: var(--chrome-inset);
   color: var(--text-light);
   border: 2px solid var(--ink);
   box-shadow: 2px 2px 0 var(--ink);
@@ -1439,6 +1484,7 @@ input, textarea, select { font-family: inherit; }
   .animate-fade-in, .animate-slide-up { animation: none; }
   .ds-item, .ll-node-box { animation: none; }
   .theme-motif-twinkle { animation: none; }
+  .hero-deco, .navbar-deco { animation: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1459,7 +1505,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 10px;
   width: 32px;
   height: 32px;
-  background: #2a3050;
+  background: var(--chrome-inset);
   color: var(--text-light);
   border: 2px solid var(--ink);
   box-shadow: var(--shadow-px-sm);
@@ -1477,7 +1523,7 @@ input, textarea, select { font-family: inherit; }
   flex: 1;
   min-width: 60px;
   height: 14px;
-  background: #2a3050;
+  background: var(--chrome-inset);
   border: 2px solid var(--ink);
   position: relative;
   overflow: visible;
@@ -1518,7 +1564,7 @@ input, textarea, select { font-family: inherit; }
   -webkit-appearance: none;
   width: 60px;
   height: 6px;
-  background: #2a3050;
+  background: var(--chrome-inset);
   border: 1px solid var(--ink);
   outline: none;
 }
@@ -2213,12 +2259,12 @@ input, textarea, select { font-family: inherit; }
 }
 .speed-slider::-webkit-slider-runnable-track {
   height: 6px;
-  background: #2a3050;
+  background: var(--chrome-inset);
   border: 1px solid var(--ink);
 }
 .speed-slider::-moz-range-track {
   height: 6px;
-  background: #2a3050;
+  background: var(--chrome-inset);
   border: 1px solid var(--ink);
 }
 

@@ -27,7 +27,14 @@ export default function Navbar({ onToggleSidebar, sidebarVisible, showSidebarTog
         <span>DSA<span className="brand-mark">QUEST</span></span>
       </Link>
 
-      <div className="navbar-center" />
+      <div className="navbar-center">
+        {theme === 'light' && (
+          <>
+            <span className="navbar-deco leaf-deco" style={{ left: '40%', top: '32%' }} aria-hidden="true">❧</span>
+            <span className="navbar-deco leaf-deco gold" style={{ left: '60%', top: '14%', animationDelay: '0.6s' }} aria-hidden="true">❧</span>
+          </>
+        )}
+      </div>
 
       <div className="navbar-actions">
         <button

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getAlgorithmsByCategory } from '../utils/algorithmRegistry';
 import useSEO from '../hooks/useSEO';
+import { useVisualizerStore } from '../store/useVisualizerStore';
 
 const CATEGORY_INFO: Record<string, { icon: string; title: string; description: string }> = {
   sorting: {
@@ -134,6 +135,7 @@ function HeroAnimation() {
 export default function HomePage() {
   const categories = getAlgorithmsByCategory();
   const [algoCount] = useState(() => Object.values(getAlgorithmsByCategory()).flat().length);
+  const theme = useVisualizerStore((s) => s.theme);
 
   useSEO({
     title: 'Learn Algorithms Visually',
@@ -149,6 +151,12 @@ export default function HomePage() {
         <span className="hero-deco d2" aria-hidden="true">✦</span>
         <span className="hero-deco d3" aria-hidden="true">⬡</span>
         <span className="hero-deco d4" aria-hidden="true">◈</span>
+        {theme === 'light' && (
+          <>
+            <span className="hero-deco d5 leaf-deco" aria-hidden="true">❧</span>
+            <span className="hero-deco d6 leaf-deco gold" aria-hidden="true">❧</span>
+          </>
+        )}
 
         <div className="hero-content animate-fade-in">
           <div className="hero-eyebrow">▶ INTERACTIVE LEARNING PLATFORM</div>
