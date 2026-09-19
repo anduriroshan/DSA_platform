@@ -9,6 +9,7 @@ const CATEGORY_META: Record<string, { icon: string; label: string }> = {
   trees:                { icon: '⊿', label: 'Trees' },
   graphs:               { icon: '⌬', label: 'Graphs' },
   'dynamic-programming':{ icon: '▦', label: 'Dynamic Prog.' },
+  'arrays-hashing':     { icon: '⧉', label: 'Arrays & Hashing (NeetCode 150)' },
 };
 
 const ITEM_ICON: Record<string, string> = {
@@ -18,6 +19,7 @@ const ITEM_ICON: Record<string, string> = {
   'data-structures':     '▣',
   graphs:                '⌬',
   'dynamic-programming': '▦',
+  'arrays-hashing':      '⧉',
 };
 
 interface SidebarProps {

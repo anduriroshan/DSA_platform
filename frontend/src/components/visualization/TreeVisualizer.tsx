@@ -72,7 +72,7 @@ export default function TreeVisualizer() {
       .attr('y1', (d: any) => d.source.y)
       .attr('x2', (d: any) => d.target.x)
       .attr('y2', (d: any) => d.target.y)
-      .attr('stroke', 'var(--text-tertiary)')
+      .attr('stroke', 'var(--ink-muted)')
       .attr('stroke-width', 1.5);
 
     // Nodes
@@ -98,7 +98,10 @@ export default function TreeVisualizer() {
       .attr('stroke', (d: any) => {
         if (frame.highlightedNodes.includes(d.data.value)) return 'var(--accent-amber)';
         if (frame.visitedNodes.includes(d.data.value)) return 'var(--accent-green)';
-        return 'var(--accent-cyan)';
+        // Structural default — deliberately theme-stable and decoupled from
+        // --accent-primary (the brand color), so an "unvisited" node never
+        // gets confused with a state color when the day/night palette swaps.
+        return 'var(--bar-default)';
       })
       .attr('stroke-width', (d: any) =>
         frame.highlightedNodes.includes(d.data.value) ? 3 : 2

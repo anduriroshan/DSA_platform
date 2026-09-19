@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ThemeMotif from './ThemeMotif';
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -35,7 +36,8 @@ export default function Navbar({ onToggleSidebar, sidebarVisible, showSidebarTog
           title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           aria-label="Toggle theme"
         >
-          {theme === 'dark' ? '☀ LIGHT' : '◐ DARK'}
+          <ThemeMotif theme={theme} />
+          {theme === 'dark' ? 'LIGHT' : 'DARK'}
         </button>
         <a
           href="https://github.com"

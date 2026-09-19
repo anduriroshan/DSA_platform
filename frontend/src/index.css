@@ -2,6 +2,15 @@
    DSAQUEST — Pixel-Art Learning Platform Design System
    Fonts are loaded from index.html via <link rel="preconnect"> +
    <link rel="stylesheet"> so they don't block CSS render.
+
+   THEME MODEL — "Minecraft day/night", not a brightness slider:
+   light/dark are two moods with their own brand accent AND their own
+   ambient motif (see --world-motif + ThemeMotif.tsx), not the same
+   palette re-tinted. See --accent-primary below for the one color that
+   actually swaps hue between themes; --accent-yellow/coral/green/purple/
+   blue stay hue-stable across both — they're the shared "data-viz
+   vocabulary" (compare/swap/sorted/pivot/etc.) and must mean the same
+   thing regardless of which world you're in.
    ═══════════════════════════════════════════════════════════════ */
 
 /* ── Design Tokens ─────────────────────────────────────────────── */
@@ -14,9 +23,22 @@
   --bg-darker:     #0f1224;
   --bg-darkest:    #08091c;
 
-  /* Accents */
-  --accent-cyan:   #00d4d4;
-  --accent-cyan-dim: #00a8a8;
+  /* Brand/identity accent — THE color that differs per theme. Night =
+     the platform's original neon cyan; Day = a sunlit terracotta, tuned
+     for AA text contrast on white (see agent-memory contrast notes). Used
+     for chrome (buttons, nav, links, CTAs) — never for data-viz frame
+     states, so retinting it can't confuse array/tree/graph/etc. legends. */
+  --accent-primary:     #a84e00;
+  --accent-primary-dim: #7a3600;
+  /* Text placed ON a --accent-primary fill (buttons, active badges).
+     Night's primary is bright (needs dark text); Day's is mid-toned
+     terracotta (needs light text) — one flip keeps every button readable. */
+  --text-on-primary: #ffffff;
+
+  /* Data-viz accent vocabulary — fixed hue across both themes on purpose.
+     These paint array bars, tree/heap/graph node & edge states, DP cells.
+     Keeping them constant means "yellow = comparing" never changes meaning
+     when you flip the theme toggle mid-lesson. */
   --accent-yellow: #f5c800;
   --accent-coral:  #ff6b6b;
   --accent-green:  #00e676;
@@ -28,13 +50,23 @@
   --medium: #f5c800;
   --hard:   #ff6b6b;
 
-  /* Bar states */
+  /* Bar states (also reused as the theme-safe "idle/default" stroke for
+     Tree/Heap/Graph nodes — see those components) */
   --bar-default: #3a4f7a;
   --bar-compare: #f5c800;
   --bar-swap:    #ff6b6b;
   --bar-sorted:  #00e676;
   --bar-pivot:   #cc66ff;
   --bar-merge:   #6699ff;
+
+  /* Status text — a plain-text-safe tier of good/warn/bad/info, distinct
+     from the bright accent-* tokens above (those are tuned for SVG fills
+     with an ink border, not for bare text on a light card — see
+     .learn-stat-value / .ll-arrow.backward). */
+  --status-good: #006b39;
+  --status-warn: #8a5800;
+  --status-bad:  #b03030;
+  --status-info: #7a35c2;
 
   /* Ink (borders, shadows) */
   --ink:           #1e2445;
@@ -57,6 +89,13 @@
   --shadow-px-lg:  6px 6px 0 var(--ink);
   --shadow-px-cyan: 4px 4px 0 var(--accent-cyan-dim);
 
+  /* Ambient per-theme motif — a handful of hard-edged "stars" for night,
+     a soft sun-glow wash for day. Applied to .navbar / .hero-section as a
+     background-image layer; see the DAY/NIGHT MOTIF section below. */
+  --world-motif:
+    radial-gradient(120px 90px at 90% -25%, rgba(168, 78, 0, 0.14), transparent 70%),
+    radial-gradient(160px 120px at -10% 120%, rgba(168, 78, 0, 0.07), transparent 70%);
+
   /* Fonts */
   --font-pixel: 'Press Start 2P', monospace;
   --font-body:  'Share Tech Mono', 'JetBrains Mono', monospace;
@@ -74,6 +113,18 @@
   --t-quick: 150ms cubic-bezier(0.4, 0, 0.2, 1);
   --t-base:  220ms cubic-bezier(0.4, 0, 0.2, 1);
 
+  /* Console-chrome accent — deliberately CONSTANT across both themes.
+     Sidebar, pseudocode/code panels, output console, viz-panel header/chips,
+     the footer, and SVG badges (heap index, graph weight/distance) all sit
+     on the always-dark bg-dark/darker/darkest surfaces (those don't flip
+     with the theme — see the "Dark Mode" comment below), so their bright
+     accent must stay constant too, or day mode would render dark terracotta
+     text on a near-black background. This is intentionally NOT the same
+     token as --accent-primary (the swapping brand/mood color above), even
+     though both were historically "the cyan." */
+  --accent-cyan:    #00d4d4;
+  --accent-cyan-dim: #00a8a8;
+
   /* Legacy aliases — used by D3 visualizers that haven't been refactored yet */
   --accent-amber:   var(--accent-yellow);
   --accent-red:     var(--accent-coral);
@@ -85,9 +136,11 @@
   --font-sans:      var(--font-body);
 }
 
-/* ── Dark Mode ─────────────────────────────────────────────────
-   Soft, low-contrast dark theme — muted navy backgrounds, off-white
-   text. Accent colors stay the same so badges/buttons still pop. */
+/* ── Dark Mode — "Night" ───────────────────────────────────────
+   Muted indigo backgrounds, off-white text, neon cyan brand accent, a
+   scattered hard-pixel starfield in the nav/hero. This is the platform's
+   original look, kept as-is (no visual regression from the pre-Minecraft
+   design) and now formalized as one of two deliberate worlds. */
 :root[data-theme="dark"] {
   --bg-base:       #1c2040;
   --bg-card:       #242949;
@@ -95,6 +148,15 @@
   --bg-dark:       #0e1024;
   --bg-darker:     #07081a;
   --bg-darkest:    #04050f;
+
+  --accent-primary:     #00d4d4;
+  --accent-primary-dim: #00a8a8;
+  --text-on-primary: #1a1f3c;
+
+  --status-good: var(--accent-green);
+  --status-warn: var(--accent-yellow);
+  --status-bad:  var(--accent-coral);
+  --status-info: var(--accent-purple);
 
   --ink:           #050610;   /* deep outline for borders/shadows */
   --ink-muted:     #8896c0;
@@ -104,6 +166,20 @@
 
   /* Bar default needs to be visible against the now-dark canvas */
   --bar-default:   #5a6da0;
+
+  /* Night motif: hard-edged scattered stars + a faint cyan moon-glow */
+  --world-motif:
+    radial-gradient(1.6px 1.6px at 8% 25%, #dfe8ff 100%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 22% 65%, #dfe8ff 100%, transparent 100%),
+    radial-gradient(1.4px 1.4px at 38% 15%, #b9c8f5 100%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 55% 78%, #dfe8ff 100%, transparent 100%),
+    radial-gradient(1.4px 1.4px at 68% 30%, #b9c8f5 100%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 80% 60%, #dfe8ff 100%, transparent 100%),
+    radial-gradient(1.4px 1.4px at 92% 20%, #b9c8f5 100%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 15% 85%, #dfe8ff 100%, transparent 100%),
+    radial-gradient(1.4px 1.4px at 48% 45%, #b9c8f5 100%, transparent 100%),
+    radial-gradient(1.6px 1.6px at 75% 90%, #dfe8ff 100%, transparent 100%),
+    radial-gradient(220px 160px at 85% -10%, rgba(0, 212, 212, 0.10), transparent 70%);
 }
 
 /* ── Reset ─────────────────────────────────────────────────────── */
@@ -127,7 +203,7 @@ body {
 /* Pixelated rendering scoped to the decorative pixel surfaces only —
    keeps photographs / icons / future raster art smooth. */
 .ds-item, .ll-node-box, .ll-null, .complexity-badge,
-.difficulty-badge, .category-icon, .hero-deco { image-rendering: pixelated; }
+.difficulty-badge, .category-icon, .hero-deco, .theme-motif { image-rendering: pixelated; }
 
 button { font-family: inherit; cursor: pointer; }
 a { color: inherit; text-decoration: none; }
@@ -174,7 +250,9 @@ input, textarea, select { font-family: inherit; }
   left: 0;
   right: 0;
   height: var(--navbar-height);
-  background: var(--bg-base);
+  background-color: var(--bg-base);
+  background-image: var(--world-motif);
+  background-repeat: no-repeat;
   border-bottom: 4px solid var(--ink);
   display: flex;
   align-items: center;
@@ -192,15 +270,15 @@ input, textarea, select { font-family: inherit; }
   color: var(--text);
   letter-spacing: 0.02em;
 }
-.navbar-brand .brand-mark { color: var(--accent-cyan); }
+.navbar-brand .brand-mark { color: var(--accent-primary); }
 .navbar-brand .logo-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 28px;
   height: 28px;
-  background: var(--accent-cyan);
-  color: var(--text-on-accent);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
   border: 2px solid var(--ink);
   box-shadow: var(--shadow-px-sm);
   font-size: 14px;
@@ -209,6 +287,14 @@ input, textarea, select { font-family: inherit; }
 .navbar-center { flex: 1; }
 
 .navbar-actions { display: flex; gap: 10px; align-items: center; }
+
+/* ── Theme motif — pixel sun/moon glyph inside the theme toggle button ── */
+.theme-motif { flex-shrink: 0; shape-rendering: crispEdges; }
+.theme-motif-twinkle { animation: motifTwinkle 1.6s steps(2, jump-none) infinite; }
+@keyframes motifTwinkle {
+  0%, 100% { opacity: 1; }
+  50%      { opacity: 0.45; }
+}
 
 /* ═══════════════════════════════════════════════════════════════
    BUTTONS
@@ -234,7 +320,7 @@ input, textarea, select { font-family: inherit; }
 .btn:active, .btn.pressed { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--ink); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: var(--shadow-px-md); }
 
-.btn-primary { background: var(--accent-cyan); color: var(--text-on-accent); }
+.btn-primary { background: var(--accent-primary); color: var(--text-on-primary); }
 .btn-secondary { background: var(--bg-card); color: var(--text); }
 .btn-ghost { background: transparent; box-shadow: 2px 2px 0 var(--ink); }
 .btn-danger { background: var(--accent-coral); color: white; }
@@ -478,7 +564,7 @@ input, textarea, select { font-family: inherit; }
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-.breadcrumb-sep { color: var(--accent-cyan); font-size: 10px; }
+.breadcrumb-sep { color: var(--accent-primary); font-size: 10px; }
 .breadcrumb-name {
   font-family: var(--font-pixel);
   font-size: 9px;
@@ -511,8 +597,8 @@ input, textarea, select { font-family: inherit; }
   transition: transform var(--t-snap), box-shadow var(--t-snap), background var(--t-snap);
 }
 .algo-nav-btn:hover {
-  background: var(--accent-cyan);
-  color: var(--text-on-accent);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
   transform: translate(-1px, -1px);
   box-shadow: 3px 3px 0 var(--ink);
 }
@@ -590,7 +676,7 @@ input, textarea, select { font-family: inherit; }
   color: var(--text);
   margin: 24px 0 12px;
   letter-spacing: 0.05em;
-  border-left: 3px solid var(--accent-cyan);
+  border-left: 3px solid var(--accent-primary);
   padding-left: 10px;
 }
 .learn-p {
@@ -636,11 +722,11 @@ input, textarea, select { font-family: inherit; }
   overflow-wrap: anywhere;
   word-break: break-word;
 }
-.learn-stat-value.good   { color: #008844; }
-.learn-stat-value.warn   { color: #aa6600; }
-.learn-stat-value.easy   { color: #008844; }
-.learn-stat-value.medium { color: #aa6600; }
-.learn-stat-value.hard   { color: var(--accent-coral); }
+.learn-stat-value.good   { color: var(--status-good); }
+.learn-stat-value.warn   { color: var(--status-warn); }
+.learn-stat-value.easy   { color: var(--status-good); }
+.learn-stat-value.medium { color: var(--status-warn); }
+.learn-stat-value.hard   { color: var(--status-bad); }
 
 .learn-list {
   font-family: var(--font-body);
@@ -655,7 +741,7 @@ input, textarea, select { font-family: inherit; }
 }
 .learn-list li::before {
   content: "▸";
-  color: var(--accent-cyan);
+  color: var(--accent-primary);
   position: absolute;
   left: 0;
   top: 2px;
@@ -669,9 +755,9 @@ input, textarea, select { font-family: inherit; }
   margin-left: 8px;
   font-family: var(--font-pixel);
   font-size: 7px;
-  color: var(--accent-cyan-dim);
+  color: var(--accent-primary-dim);
   background: var(--bg-card);
-  border: 1px solid var(--accent-cyan-dim);
+  border: 1px solid var(--accent-primary-dim);
   padding: 2px 6px;
   letter-spacing: 0.1em;
   vertical-align: middle;
@@ -719,7 +805,7 @@ input, textarea, select { font-family: inherit; }
 .learn-callout {
   background: var(--bg-card);
   border: 2px solid var(--ink);
-  border-left: 6px solid var(--accent-cyan);
+  border-left: 6px solid var(--accent-primary);
   box-shadow: var(--shadow-px-sm);
   padding: 14px 16px;
   margin: 12px 0;
@@ -727,7 +813,7 @@ input, textarea, select { font-family: inherit; }
 .learn-callout-title {
   font-family: var(--font-pixel);
   font-size: 8px;
-  color: var(--accent-cyan-dim);
+  color: var(--accent-primary-dim);
   margin-bottom: 6px;
   letter-spacing: 0.1em;
 }
@@ -994,7 +1080,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 11px;
   transition: transform var(--t-snap), box-shadow var(--t-snap), background var(--t-snap);
 }
-.viz-icon-btn:hover { background: var(--accent-cyan); color: var(--text-on-accent); transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
+.viz-icon-btn:hover { background: var(--accent-primary); color: var(--text-on-primary); transform: translate(-1px,-1px); box-shadow: 3px 3px 0 var(--ink); }
 .viz-icon-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
 
 /* Resize handle on the left edge of the viz panel */
@@ -1020,7 +1106,7 @@ input, textarea, select { font-family: inherit; }
   opacity: 0;
   transition: opacity var(--t-snap);
 }
-.viz-resize-handle:hover::after { opacity: 1; background: var(--accent-cyan); }
+.viz-resize-handle:hover::after { opacity: 1; background: var(--accent-primary); }
 
 /* Collapsed strip */
 .viz-collapsed-strip {
@@ -1036,13 +1122,13 @@ input, textarea, select { font-family: inherit; }
 .viz-collapsed-btn {
   width: 32px;
   height: 32px;
-  background: var(--accent-cyan);
+  background: var(--accent-primary);
   border: 2px solid var(--ink);
   box-shadow: var(--shadow-px-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--text);
+  color: var(--text-on-primary);
   font-size: 13px;
   font-family: var(--font-pixel);
 }
@@ -1102,8 +1188,8 @@ input, textarea, select { font-family: inherit; }
   animation: dsItemIn 220ms steps(3, end) both;
 }
 .ds-item.highlight {
-  background: var(--accent-cyan);
-  color: var(--text-on-accent);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
   box-shadow: var(--shadow-px);
   transform: translate(-1px, -1px);
 }
@@ -1136,7 +1222,7 @@ input, textarea, select { font-family: inherit; }
   animation: dsItemIn 220ms steps(3, end) both;
 }
 .ll-node-box.highlight {
-  background: var(--accent-cyan);
+  background: var(--accent-primary);
   box-shadow: var(--shadow-px);
   transform: translate(-1px, -1px);
 }
@@ -1149,12 +1235,12 @@ input, textarea, select { font-family: inherit; }
   min-width: 60px;
   text-align: center;
 }
-.ll-node-box.highlight .ll-data { color: var(--text-on-accent); }
+.ll-node-box.highlight .ll-data { color: var(--text-on-primary); }
 .ll-next {
   padding: 14px 14px;
   font-family: var(--font-pixel);
   font-size: 14px;
-  color: var(--accent-cyan);
+  color: var(--accent-primary);
   background: var(--bg-elevated);
   min-width: 36px;
   text-align: center;
@@ -1163,8 +1249,8 @@ input, textarea, select { font-family: inherit; }
   justify-content: center;
 }
 .ll-node-box.highlight .ll-next {
-  background: var(--accent-cyan-dim);
-  color: var(--text-on-accent);
+  background: var(--accent-primary-dim);
+  color: var(--text-on-primary);
 }
 .ll-arrow {
   font-family: var(--font-pixel);
@@ -1177,7 +1263,7 @@ input, textarea, select { font-family: inherit; }
   padding: 14px 14px;
   font-family: var(--font-pixel);
   font-size: 14px;
-  color: var(--accent-purple);
+  color: var(--status-info);
   background: var(--bg-elevated);
   min-width: 36px;
   text-align: center;
@@ -1187,8 +1273,8 @@ input, textarea, select { font-family: inherit; }
   justify-content: center;
 }
 .ll-node-box.highlight .ll-prev {
-  background: var(--accent-cyan-dim);
-  color: var(--text-on-accent);
+  background: var(--accent-primary-dim);
+  color: var(--text-on-primary);
 }
 /* Paired arrows: forward on top, backward on bottom for doubly-linked */
 .ll-arrow-pair {
@@ -1205,7 +1291,7 @@ input, textarea, select { font-family: inherit; }
   font-size: 16px;
 }
 .ll-arrow.forward  { color: var(--ink-muted); }
-.ll-arrow.backward { color: var(--accent-purple); }
+.ll-arrow.backward { color: var(--status-info); }
 .ll-arrow.backward.muted { color: var(--ink-light); opacity: 0.5; }
 .ll-null {
   font-family: var(--font-pixel);
@@ -1297,7 +1383,7 @@ input, textarea, select { font-family: inherit; }
   background: var(--bg-elevated);
   font-family: var(--font-pixel);
   font-size: 9px;
-  color: var(--accent-cyan-dim);
+  color: var(--accent-primary-dim);
   text-align: center;
   display: flex;
   align-items: center;
@@ -1352,6 +1438,7 @@ input, textarea, select { font-family: inherit; }
   .step-description { animation: none; }
   .animate-fade-in, .animate-slide-up { animation: none; }
   .ds-item, .ll-node-box { animation: none; }
+  .theme-motif-twinkle { animation: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -1384,7 +1471,7 @@ input, textarea, select { font-family: inherit; }
 }
 .playback-btn:hover { transform: translate(-1px,-1px); box-shadow: var(--shadow-px-md); }
 .playback-btn:active { transform: translate(1px,1px); box-shadow: 1px 1px 0 var(--ink); }
-.playback-btn.primary { background: var(--accent-cyan); color: var(--text-on-accent); }
+.playback-btn.primary { background: var(--accent-primary); color: var(--text-on-primary); }
 
 .progress-bar-container {
   flex: 1;
@@ -1471,6 +1558,9 @@ input, textarea, select { font-family: inherit; }
   padding: 80px 40px 60px;
   text-align: center;
   position: relative;
+  background-color: var(--bg-base);
+  background-image: var(--world-motif);
+  background-repeat: no-repeat;
 }
 
 .hero-deco {
@@ -1505,10 +1595,10 @@ input, textarea, select { font-family: inherit; }
   color: var(--text);
   line-height: 1.4;
   margin-bottom: 20px;
-  text-shadow: 5px 5px 0 var(--accent-cyan);
+  text-shadow: 5px 5px 0 var(--accent-primary);
   letter-spacing: 0.02em;
 }
-.hero-title .accent { color: var(--accent-cyan); text-shadow: none; }
+.hero-title .accent { color: var(--accent-primary); text-shadow: none; }
 .hero-subtitle {
   font-family: var(--font-body);
   font-size: 17px;
@@ -1626,7 +1716,7 @@ input, textarea, select { font-family: inherit; }
   letter-spacing: 0.04em;
   transition: transform var(--t-snap);
 }
-.algo-tag:hover { transform: translate(-1px,-1px); box-shadow: 2px 2px 0 var(--ink); background: var(--accent-cyan); }
+.algo-tag:hover { transform: translate(-1px,-1px); box-shadow: 2px 2px 0 var(--ink); background: var(--accent-primary); color: var(--text-on-primary); }
 
 /* ── Hero live demo canvas ── */
 .hero-demo {
@@ -1645,7 +1735,7 @@ input, textarea, select { font-family: inherit; }
 .hero-demo-label {
   font-family: var(--font-pixel);
   font-size: 7px;
-  color: var(--accent-cyan);
+  color: var(--accent-primary);
   letter-spacing: 0.18em;
   margin-top: 10px;
 }
@@ -1655,7 +1745,7 @@ input, textarea, select { font-family: inherit; }
   font-family: var(--font-pixel);
   font-size: 8px;
   letter-spacing: 0.2em;
-  color: var(--accent-cyan);
+  color: var(--accent-primary);
   text-align: center;
   margin-bottom: 10px;
 }
@@ -1688,8 +1778,8 @@ input, textarea, select { font-family: inherit; }
   left: 16px;
   font-family: var(--font-pixel);
   font-size: 10px;
-  background: var(--accent-cyan);
-  color: var(--text-on-accent);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
   padding: 4px 10px;
   border: 2px solid var(--ink);
   box-shadow: 2px 2px 0 var(--ink);
@@ -1697,7 +1787,7 @@ input, textarea, select { font-family: inherit; }
 .how-icon {
   font-size: 28px;
   margin-bottom: 14px;
-  color: var(--accent-cyan);
+  color: var(--accent-primary);
 }
 .how-card h3 {
   font-family: var(--font-pixel);
@@ -1738,7 +1828,7 @@ input, textarea, select { font-family: inherit; }
 }
 .usp-icon {
   font-size: 22px;
-  color: var(--accent-cyan);
+  color: var(--accent-primary);
 }
 .usp-card h3 {
   font-family: var(--font-pixel);
@@ -1851,7 +1941,7 @@ input, textarea, select { font-family: inherit; }
 ::-webkit-scrollbar { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: var(--bg-card); border-left: 2px solid var(--ink); }
 ::-webkit-scrollbar-thumb { background: var(--bg-dark); border: 2px solid var(--ink); }
-::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+::-webkit-scrollbar-thumb:hover { background: var(--accent-primary); }
 
 /* Dark areas */
 .sidebar::-webkit-scrollbar-track,
@@ -1958,8 +2048,8 @@ input, textarea, select { font-family: inherit; }
   align-items: center;
   gap: 4px;
   padding: 10px 14px;
-  background: var(--accent-cyan);
-  color: var(--text-on-accent);
+  background: var(--accent-primary);
+  color: var(--text-on-primary);
   border: 3px solid var(--ink);
   box-shadow: var(--shadow-px);
   cursor: pointer;
@@ -2069,7 +2159,7 @@ input, textarea, select { font-family: inherit; }
 .input-field:focus-visible,
 .sidebar-search-input:focus-visible,
 .progress-bar-container:focus-visible {
-  outline: 2px solid var(--accent-cyan);
+  outline: 2px solid var(--accent-primary);
   outline-offset: 2px;
 }
 

@@ -23,10 +23,32 @@ type AnyFrame =
 const VIZ_PANEL_KEY        = 'dsaq.vizPanelOpen';
 const VIZ_PANEL_WIDTH_KEY  = 'dsaq.vizPanelWidth';
 const EDITOR_OPEN_KEY      = 'dsaq.codeEditorOpen';
+const THEME_KEY            = 'dsaq.theme';
 
 const MIN_VIZ_WIDTH = 280;
 const MAX_VIZ_WIDTH = 720;
 const DEFAULT_VIZ_WIDTH = 360;
+
+export type Theme = 'light' | 'dark';
+
+// Theme lives here (not local App.tsx state) so any component — decorative
+// motifs, future onboarding, etc. — can read/react to it without prop
+// drilling through App. Kept as a Minecraft-style day/night pair; see
+// index.css's `--accent-primary` / `--world-motif` tokens for the visual side.
+const readTheme = (): Theme => {
+  try {
+    const v = localStorage.getItem(THEME_KEY);
+    if (v === 'dark' || v === 'light') return v;
+  } catch {}
+  return 'dark';
+};
+// Applied eagerly (module load + every change) so `data-theme` is correct
+// before first paint — avoids a flash of the wrong theme.
+const applyThemeAttr = (t: Theme) => {
+  try { document.documentElement.setAttribute('data-theme', t); } catch {}
+};
+const initialTheme = readTheme();
+applyThemeAttr(initialTheme);
 
 const readVizPanelOpen = (): boolean => {
   try {
@@ -64,6 +86,7 @@ interface VisualizerState {
   vizPanelWidth: number;
   userInteracted: boolean;
   codeEditorOpen: boolean;
+  theme: Theme;
 
   loadAlgorithm: (slug: string) => void;
   generateFrames: () => void;
@@ -86,6 +109,8 @@ interface VisualizerState {
   markUserInteracted: () => void;
   toggleCodeEditor: () => void;
   setCodeEditorOpen: (open: boolean) => void;
+  toggleTheme: () => void;
+  setTheme: (theme: Theme) => void;
 }
 
 export const useVisualizerStore = create<VisualizerState>((set, get) => ({
@@ -106,6 +131,7 @@ export const useVisualizerStore = create<VisualizerState>((set, get) => ({
   vizPanelWidth: readVizPanelWidth(),
   userInteracted: false,
   codeEditorOpen: readCodeEditorOpen(),
+  theme: initialTheme,
 
   loadAlgorithm: (slug: string) => {
     const config = algorithmRegistry[slug];
@@ -183,5 +209,17 @@ export const useVisualizerStore = create<VisualizerState>((set, get) => ({
   setCodeEditorOpen: (open: boolean) => {
     set({ codeEditorOpen: open });
     try { localStorage.setItem(EDITOR_OPEN_KEY, open ? '1' : '0'); } catch {}
+  },
+
+  toggleTheme: () => {
+    const next: Theme = get().theme === 'light' ? 'dark' : 'light';
+    applyThemeAttr(next);
+    try { localStorage.setItem(THEME_KEY, next); } catch {}
+    set({ theme: next });
+  },
+  setTheme: (theme: Theme) => {
+    applyThemeAttr(theme);
+    try { localStorage.setItem(THEME_KEY, theme); } catch {}
+    set({ theme });
   },
 }));

@@ -19,13 +19,16 @@ const NODE_FILL: Record<GraphNodeState, string> = {
   frontier:  'rgba(102, 153, 255, 0.22)',
 };
 const NODE_STROKE: Record<GraphNodeState, string> = {
-  unvisited: 'var(--accent-cyan)',
+  // Structural default — theme-stable and decoupled from --accent-primary/
+  // --accent-cyan (both of which are tuned for other roles), so "unvisited"
+  // stays legible on the theme-adaptive canvas in both light and dark.
+  unvisited: 'var(--bar-default)',
   visiting:  'var(--accent-yellow)',
   visited:   'var(--accent-green)',
   frontier:  'var(--accent-blue)',
 };
 const EDGE_STROKE: Record<GraphEdgeState, string> = {
-  idle:       'var(--text-tertiary)',
+  idle:       'var(--ink-muted)',
   traversing: 'var(--accent-yellow)',
   'in-tree':  'var(--accent-purple)',
   relaxed:    'var(--accent-green)',

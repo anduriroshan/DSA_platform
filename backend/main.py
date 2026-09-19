@@ -1092,6 +1092,233 @@ print(f"B = {B}")
 print(f"LCS length = {length}")
 print(f"LCS string = '{subseq}'")""",
     },
+    # ─── Arrays & Hashing (NeetCode 150) — Phase 1 ──────────────────
+    {
+        "slug": "contains-duplicate",
+        "name": "Contains Duplicate",
+        "category": "arrays-hashing",
+        "difficulty": "easy",
+        "time_complexity": "O(n)",
+        "space_complexity": "O(n)",
+        "description": "Returns true if any value appears at least twice in the array, using a hash set for a single O(n) pass. A classic NeetCode 150 opener that tests whether you reach for a hash set instead of nested loops.",
+        "sample_code_python": """def hasDuplicate(nums):
+    seen = set()
+    for num in nums:
+        if num in seen:
+            return True
+        seen.add(num)
+    return False
+
+# Example
+print(hasDuplicate([1, 2, 3, 4, 2, 5]))  # True
+print(hasDuplicate([1, 2, 3, 4, 5]))     # False""",
+    },
+    {
+        "slug": "valid-anagram",
+        "name": "Valid Anagram",
+        "category": "arrays-hashing",
+        "difficulty": "easy",
+        "time_complexity": "O(n)",
+        "space_complexity": "O(1) — fixed 26-slot array",
+        "description": "Determines whether two strings are anagrams of each other using a single 26-slot character-frequency array — increment for the first string, decrement for the second, and check that every slot returns to zero.",
+        "sample_code_python": """def isAnagram(s, t):
+    if len(s) != len(t):
+        return False
+    count = [0] * 26
+    for ch in s:
+        count[ord(ch) - ord('a')] += 1
+    for ch in t:
+        count[ord(ch) - ord('a')] -= 1
+    return all(c == 0 for c in count)
+
+# Example
+print(isAnagram("anagram", "nagaram"))  # True
+print(isAnagram("rat", "car"))          # False""",
+    },
+    {
+        "slug": "two-sum",
+        "name": "Two Sum",
+        "category": "arrays-hashing",
+        "difficulty": "easy",
+        "time_complexity": "O(n)",
+        "space_complexity": "O(n)",
+        "description": "Returns the indices of the two numbers that add up to target, using a single-pass hash map of value → index. The most-solved problem on LeetCode and a common first FAANG interview question.",
+        "sample_code_python": """def twoSum(nums, target):
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+    return []
+
+# Example
+print(twoSum([2, 7, 11, 15], 9))  # [0, 1]""",
+    },
+    {
+        "slug": "group-anagrams",
+        "name": "Group Anagrams",
+        "category": "arrays-hashing",
+        "difficulty": "medium",
+        "time_complexity": "O(n·k log k)",
+        "space_complexity": "O(n·k)",
+        "description": "Groups an array of strings into anagram clusters, keyed by each string's sorted-character signature (or a 26-count signature for an O(n·k) variant that avoids sorting).",
+        "sample_code_python": """def groupAnagrams(strs):
+    groups = {}
+    for s in strs:
+        key = ''.join(sorted(s))
+        if key not in groups:
+            groups[key] = []
+        groups[key].append(s)
+    return list(groups.values())
+
+# Example
+print(groupAnagrams(["eat", "tea", "tan", "ate", "nat", "bat"]))
+# [['eat', 'tea', 'ate'], ['tan', 'nat'], ['bat']]""",
+    },
+    {
+        "slug": "top-k-frequent-elements",
+        "name": "Top K Frequent Elements",
+        "category": "arrays-hashing",
+        "difficulty": "medium",
+        "time_complexity": "O(n)",
+        "space_complexity": "O(n)",
+        "description": "Returns the k most frequent elements using bucket sort by frequency (buckets indexed 0..n), avoiding the O(n log n) cost of sorting by count.",
+        "sample_code_python": """def topKFrequent(nums, k):
+    count = {}
+    for num in nums:
+        count[num] = count.get(num, 0) + 1
+    buckets = [[] for _ in range(len(nums) + 1)]
+    for num, freq in count.items():
+        buckets[freq].append(num)
+    result = []
+    for freq in range(len(buckets) - 1, 0, -1):
+        for num in buckets[freq]:
+            result.append(num)
+            if len(result) == k:
+                return result
+    return result
+
+# Example
+print(topKFrequent([1, 1, 1, 2, 2, 3], 2))  # [1, 2]""",
+    },
+    {
+        "slug": "product-of-array-except-self",
+        "name": "Product of Array Except Self",
+        "category": "arrays-hashing",
+        "difficulty": "medium",
+        "time_complexity": "O(n)",
+        "space_complexity": "O(1) extra (excluding output array)",
+        "description": "Builds an array where each element is the product of all other elements, without using division, via a left-to-right prefix pass followed by a right-to-left suffix pass.",
+        "sample_code_python": """def productExceptSelf(nums):
+    n = len(nums)
+    res = [1] * n
+    prefix = 1
+    for i in range(n):
+        res[i] = prefix
+        prefix *= nums[i]
+    suffix = 1
+    for i in range(n - 1, -1, -1):
+        res[i] *= suffix
+        suffix *= nums[i]
+    return res
+
+# Example
+print(productExceptSelf([1, 2, 3, 4]))  # [24, 12, 8, 6]""",
+    },
+    {
+        "slug": "valid-sudoku",
+        "name": "Valid Sudoku",
+        "category": "arrays-hashing",
+        "difficulty": "medium",
+        "time_complexity": "O(1) — fixed 81 cells",
+        "space_complexity": "O(1) — fixed 27 digit sets",
+        "description": "Validates a 9x9 Sudoku board by tracking seen digits per row, column, and 3x3 box in a single pass, returning false the moment any digit repeats within one of its constraints.",
+        "sample_code_python": """def isValidSudoku(board):
+    rows = [set() for _ in range(9)]
+    cols = [set() for _ in range(9)]
+    boxes = [set() for _ in range(9)]
+    for r in range(9):
+        for c in range(9):
+            val = board[r][c]
+            if val == '.':
+                continue
+            b = (r // 3) * 3 + (c // 3)
+            if val in rows[r] or val in cols[c] or val in boxes[b]:
+                return False
+            rows[r].add(val)
+            cols[c].add(val)
+            boxes[b].add(val)
+    return True
+
+# Example — invalid: '8' repeats in box 0 (row 0 col 0 and row 2 col 2)
+board = [
+    ["8","3",".",".","7",".",".",".","."],
+    ["6",".",".","1","9","5",".",".","."],
+    [".","9","8",".",".",".",".","6","."],
+    ["8",".",".",".","6",".",".",".","3"],
+    ["4",".",".","8",".","3",".",".","1"],
+    ["7",".",".",".","2",".",".",".","6"],
+    [".","6",".",".",".",".","2","8","."],
+    [".",".",".","4","1","9",".",".","5"],
+    [".",".",".",".","8",".",".","7","9"],
+]
+print(isValidSudoku(board))  # False""",
+    },
+    {
+        "slug": "encode-and-decode-strings",
+        "name": "Encode and Decode Strings",
+        "category": "arrays-hashing",
+        "difficulty": "medium",
+        "time_complexity": "O(n) — total characters",
+        "space_complexity": "O(n)",
+        "description": "Encodes a list of strings into one string and decodes it back, using length-prefix framing (\"<length>#<string>\") so any character — including delimiters — can safely appear inside a string.",
+        "sample_code_python": """def encode(strs):
+    result = ""
+    for s in strs:
+        result += str(len(s)) + "#" + s
+    return result
+
+def decode(s):
+    result = []
+    i = 0
+    while i < len(s):
+        j = i
+        while s[j] != '#':
+            j += 1
+        length = int(s[i:j])
+        result.append(s[j + 1:j + 1 + length])
+        i = j + 1 + length
+    return result
+
+# Example
+strs = ["neet", "code", "love", "you"]
+encoded = encode(strs)
+print(encoded)          # '4#neet4#code4#love3#you'
+print(decode(encoded))  # ['neet', 'code', 'love', 'you']""",
+    },
+    {
+        "slug": "longest-consecutive-sequence",
+        "name": "Longest Consecutive Sequence",
+        "category": "arrays-hashing",
+        "difficulty": "medium",
+        "time_complexity": "O(n)",
+        "space_complexity": "O(n)",
+        "description": "Finds the length of the longest run of consecutive integers in an unsorted array in O(n), by putting all values in a hash set and only starting a count from numbers whose predecessor (n-1) is absent from the set.",
+        "sample_code_python": """def longestConsecutive(nums):
+    num_set = set(nums)
+    longest = 0
+    for num in num_set:
+        if num - 1 not in num_set:
+            length = 1
+            while num + length in num_set:
+                length += 1
+            longest = max(longest, length)
+    return longest
+
+# Example
+print(longestConsecutive([100, 4, 200, 1, 3, 2]))  # 4  (the sequence 1, 2, 3, 4)""",
+    },
 ]
 
 

@@ -1,4 +1,6 @@
-- [Platform snapshot (2026-05-24)](platform_snapshot_2026_05.md) — algorithms implemented, visualizers available, categories registered
+- [Platform snapshot (2026-05-24, updated 2026-09-19)](platform_snapshot_2026_05.md) — 37 algorithms, visualizers, categories incl. new arrays-hashing
 - [Backend seed location](backend_seed_location.md) — where DB seed data lives and how seeding runs
-- [Sidebar categories](sidebar_categories.md) — Sidebar CATEGORY_META now covers 6 categories incl. graphs and dynamic-programming
+- [Sidebar categories](sidebar_categories.md) — CATEGORY_META covers 7 categories incl. arrays-hashing; order = registry insertion order
 - [New frame conventions](new_frame_conventions.md) — heap, graph, dp-table, doubly-linked frame contract details verified in Tier 3
+- [NeetCode content type](neetcode_content_type.md) — NeetCode 150 problems: real-code-not-pseudocode convention, category/folder rules, hardcoded-input precedent
+- [Phase 1 Arrays & Hashing fidelity](phase1_arrays_hashing_fidelity.md) — which of the 9 problems are faithful vs. approximated visualizations, and why

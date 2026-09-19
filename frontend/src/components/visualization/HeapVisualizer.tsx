@@ -89,7 +89,7 @@ export default function HeapVisualizer() {
             .attr('stroke',
               inSwap        ? 'var(--accent-coral)' :
               compareEdge   ? 'var(--accent-yellow)' :
-                              'var(--text-tertiary)'
+                              'var(--ink-muted)'
             )
             .attr('stroke-width', inSwap || compareEdge ? 2.5 : 1.5)
             .attr('stroke-dasharray', inSwap ? '6 4' : null);
@@ -114,7 +114,9 @@ export default function HeapVisualizer() {
         if (swapPair.has(i))            return 'var(--accent-coral)';
         if (settled.has(i))             return 'var(--accent-green)';
         if (highlighted.has(i))         return 'var(--accent-yellow)';
-        return 'var(--accent-cyan)';
+        // Structural default — see TreeVisualizer for why this is decoupled
+        // from --accent-primary (the theme-swapping brand color).
+        return 'var(--bar-default)';
       };
 
       nodeG.append('circle')
