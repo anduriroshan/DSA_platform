@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import ThemeMotif from './ThemeMotif';
+import LogoMark from './LogoMark';
 
 interface NavbarProps {
   onToggleSidebar: () => void;
@@ -23,8 +24,8 @@ export default function Navbar({ onToggleSidebar, sidebarVisible, showSidebarTog
         </button>
       )}
       <Link to="/" className="navbar-brand">
-        <span className="logo-icon">▶</span>
-        <span>DSA<span className="brand-mark">QUEST</span></span>
+        <span className="logo-icon"><LogoMark /></span>
+        <span>AKGO<span className="brand-mark">FLICK</span></span>
       </Link>
 
       <div className="navbar-center">

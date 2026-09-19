@@ -20,10 +20,10 @@ type AnyFrame =
   | GraphAnimationFrame
   | DPTableAnimationFrame;
 
-const VIZ_PANEL_KEY        = 'dsaq.vizPanelOpen';
-const VIZ_PANEL_WIDTH_KEY  = 'dsaq.vizPanelWidth';
-const EDITOR_OPEN_KEY      = 'dsaq.codeEditorOpen';
-const THEME_KEY            = 'dsaq.theme';
+const VIZ_PANEL_KEY        = 'akgoflick.vizPanelOpen';
+const VIZ_PANEL_WIDTH_KEY  = 'akgoflick.vizPanelWidth';
+const EDITOR_OPEN_KEY      = 'akgoflick.codeEditorOpen';
+const THEME_KEY            = 'akgoflick.theme';
 
 const MIN_VIZ_WIDTH = 280;
 const MAX_VIZ_WIDTH = 720;

@@ -1,29 +1,56 @@
 import { useEffect, useRef, useState } from 'react';
+import type { ComponentType } from 'react';
 import { Link } from 'react-router-dom';
 import { getAlgorithmsByCategory } from '../utils/algorithmRegistry';
 import useSEO from '../hooks/useSEO';
 import { useVisualizerStore } from '../store/useVisualizerStore';
+import LogoMark from '../components/layout/LogoMark';
+import {
+  SortingIcon,
+  SearchingIcon,
+  DataStructuresIcon,
+  TreesIcon,
+  GraphsIcon,
+  DynamicProgrammingIcon,
+  ArraysHashingIcon,
+  type CategoryIconProps,
+} from '../components/icons/CategoryIcons';
 
-const CATEGORY_INFO: Record<string, { icon: string; title: string; description: string }> = {
+const CATEGORY_INFO: Record<string, { icon: ComponentType<CategoryIconProps>; title: string; description: string }> = {
   sorting: {
-    icon: '🫧',
+    icon: SortingIcon,
     title: 'SORTING',
     description: 'Bubble, Quick, Merge and more — watch how data lines up.',
   },
   searching: {
-    icon: '🔍',
+    icon: SearchingIcon,
     title: 'SEARCHING',
     description: 'Find elements fast — linear scan vs. binary divide-and-conquer.',
   },
   'data-structures': {
-    icon: '📦',
+    icon: DataStructuresIcon,
     title: 'STRUCTURES',
     description: 'Stacks, queues, and linked lists with interactive operations.',
   },
   trees: {
-    icon: '🌳',
+    icon: TreesIcon,
     title: 'TREES',
     description: 'Binary search trees, insertions, and traversal strategies.',
+  },
+  graphs: {
+    icon: GraphsIcon,
+    title: 'GRAPHS',
+    description: 'BFS, DFS, and traversal — explore nodes and edges in motion.',
+  },
+  'dynamic-programming': {
+    icon: DynamicProgrammingIcon,
+    title: 'DYNAMIC PROG.',
+    description: 'Fibonacci, LCS, and more — build answers from overlapping subproblems.',
+  },
+  'arrays-hashing': {
+    icon: ArraysHashingIcon,
+    title: 'ARRAYS & HASHING',
+    description: 'Two Sum, duplicates, and more — master arrays with O(1) lookups.',
   },
 };
 
@@ -139,7 +166,7 @@ export default function HomePage() {
 
   useSEO({
     title: 'Learn Algorithms Visually',
-    description: 'DSAQuest — step through interactive algorithm visualizations, write real Python code, and master data structures one algorithm at a time.',
+    description: 'Akgoflick — step through interactive algorithm visualizations, write real Python code, and master data structures one algorithm at a time.',
     keywords: 'DSA, algorithms, data structures, visualization, sorting, searching, trees, linked list, stack, queue, learn programming',
   });
 
@@ -180,6 +207,9 @@ export default function HomePage() {
             <a href="#categories" className="btn btn-secondary">
               ◎ BROWSE ALGORITHMS
             </a>
+            <Link to="/visualize/contains-duplicate" className="btn btn-secondary">
+              ⧉ NEETCODE 150
+            </Link>
           </div>
           <div className="hero-stats">
             <div className="hero-stat">
@@ -187,7 +217,7 @@ export default function HomePage() {
               <div className="stat-label">ALGORITHMS</div>
             </div>
             <div className="hero-stat">
-              <div className="stat-value">04</div>
+              <div className="stat-value">{Object.keys(categories).length}</div>
               <div className="stat-label">CATEGORIES</div>
             </div>
             <div className="hero-stat">
@@ -232,13 +262,14 @@ export default function HomePage() {
         <div className="categories-grid">
           {Object.entries(categories).map(([category, algos], index) => {
             const info = CATEGORY_INFO[category];
+            const Icon = info?.icon;
             return (
               <div
                 key={category}
                 className={`category-card animate-slide-up c-${category}`}
                 style={{ animationDelay: `${index * 100}ms` }}
               >
-                <span className="category-icon">{info?.icon || '📁'}</span>
+                <span className="category-icon">{Icon && <Icon />}</span>
                 <h3>{info?.title || category.toUpperCase()}</h3>
                 <p>{info?.description || ''}</p>
                 <div className="category-algos">
@@ -295,7 +326,7 @@ export default function HomePage() {
       <footer className="site-footer">
         <div className="footer-inner">
           <div className="footer-brand">
-            <span className="footer-logo">▶ DSA<span className="brand-mark">QUEST</span></span>
+            <span className="footer-logo"><LogoMark size={16} /> AKGO<span className="brand-mark">FLICK</span></span>
             <p className="footer-tagline">Learn algorithms by seeing, doing, and understanding.</p>
           </div>
           <div className="footer-links">
@@ -313,7 +344,7 @@ export default function HomePage() {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>DSAQuest 2026. Built with React, D3, and FastAPI.</span>
+          <span>Akgoflick 2026. Built with React, D3, and FastAPI.</span>
         </div>
       </footer>
     </div>

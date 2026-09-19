@@ -17,4 +17,6 @@ Full-stack, interactive DSA (Data Structures & Algorithms) visual learning platf
 
 **Theme system:** see [[theme_system_minecraft]] for the full day/night architecture — token strategy, motif approach, where state lives.
 
+**Rename (2026-09-19):** product renamed DSAQuest → **Akgoflick** (K as the third letter — this spelling has flip-flopped more than once in one day, see [[brand-rename-algoflick]] and re-verify by grep before trusting any spelling you're handed, including this one). Logo mark redesign is resolved — see [[logo-mark-review]] for the chosen mark and the one remaining open item (favicon).
+
 **How to apply:** When designing new UI, respect the pixel-art system (hard `Npx Npx 0 var(--ink)` shadows, no blur, `Press Start 2P` display font) and the day/night token split described in [[theme_system_minecraft]]. All visualizers are presentational, driven by `frames[currentStep]` from `useVisualizerStore` — no algorithm logic belongs in a `*Visualizer.tsx` file.

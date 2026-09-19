@@ -6,7 +6,7 @@ interface SEOProps {
   keywords?: string;
 }
 
-const BASE_TITLE = 'DSAQuest';
+const BASE_TITLE = 'Akgoflick';
 
 export default function useSEO({ title, description, keywords }: SEOProps) {
   useEffect(() => {
